@@ -1,1 +1,4 @@
-# dsd-t2
+## Integrantes
+
+- Lucas Moraes Schwambach
+- Mateus Lucas Cruz Brandt
