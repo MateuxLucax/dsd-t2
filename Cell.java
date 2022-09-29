@@ -15,10 +15,6 @@ public enum Cell {
   CROSSING_LEFT_UP    (10, "⮤"),
   CROSSING_RIGHT_DOWN (11, "⮧"),
   CROSSING_DOWN_LEFT  (12, "⮠");
-   // ⮡ ⮢   ⮥ ⮦
-  //⮠ ⮡ ⮢ ⮣ ⮤ ⮥ ⮦ ⮧
-
-
 
   private int id;
   private String str;
