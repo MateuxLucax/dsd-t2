@@ -16,19 +16,19 @@ public enum Cell {
   CROSSING_RIGHT_DOWN (11, "⮧"),
   CROSSING_DOWN_LEFT  (12, "⮠");
 
-  private int id;
-  private String str;
+  private final int id;
+  private final String str;
 
   Cell(int id, String str) {
     this.id = id;
     this.str = str;
   }
 
-  public static Optional<Cell> from(int id) {
+  public static Cell from(int id) {
     for (var c : Cell.values())
       if (c.id == id)
-        return Optional.of(c);
-    return Optional.empty();
+        return c;
+    return null;
   }
 
   public String toString() {

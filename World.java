@@ -10,6 +10,10 @@ public class World {
     this.cols = cols;
   }
 
+  public int rows() { return rows; }
+  public int cols() { return cols; }
+  public Cell get(int i, int j) { return cells[i][j]; }
+
   public static World from(String str) {
     var lines = str.split("\n");
     for (var l = 0; l < lines.length; l++) {
@@ -21,12 +25,15 @@ public class World {
 
     var world = new World(rows, cols);
 
-    for (var k = 2; k < lines.length; k++) {
-      var cells = lines[k].split("\t");
-      var i = k - 2;
+    for (var l = 2; l < lines.length; l++) {
+      var cells = lines[l].split("\t");
+      var i = l - 2;
       for (var j = 0; j < cols; j++) {
         var id = Integer.parseInt(cells[j]);
-        var cell = Cell.from(id).orElseThrow(() -> new RuntimeException("Invalid cell id" + id));
+        var cell = Cell.from(id);
+        if (cell == null) {
+          throw new RuntimeException("Invalid cell id" + id);
+        }
         world.cells[i][j] = cell;
       }
     }
