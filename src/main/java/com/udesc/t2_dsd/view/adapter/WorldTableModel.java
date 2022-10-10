@@ -1,7 +1,7 @@
 package com.udesc.t2_dsd.view.adapter;
 
 import com.udesc.t2_dsd.model.Cell;
-import com.udesc.t2_dsd_infra.Database;
+import com.udesc.t2_dsd.infra.Database;
 import com.udesc.t2_dsd.model.World;
 import javax.swing.table.AbstractTableModel;
 

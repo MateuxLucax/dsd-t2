@@ -1,7 +1,7 @@
 package com.udesc.t2_dsd.model;
 
 import com.udesc.t2_dsd.util.Constants;
-import com.udesc.t2_dsd_infra.Database;
+import com.udesc.t2_dsd.infra.Database;
 
 public class Car extends Thread {
     private long sleep;

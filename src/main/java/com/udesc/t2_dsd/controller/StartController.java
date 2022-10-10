@@ -4,7 +4,7 @@ import com.udesc.t2_dsd.model.World;
 import com.udesc.t2_dsd.util.Util;
 import com.udesc.t2_dsd.view.SimulatorView;
 import com.udesc.t2_dsd.view.StartView;
-import com.udesc.t2_dsd_infra.Database;
+import com.udesc.t2_dsd.infra.Database;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

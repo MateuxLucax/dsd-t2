@@ -3,7 +3,7 @@ package com.udesc.t2_dsd.view.adapter;
 import com.udesc.t2_dsd.model.Car;
 import com.udesc.t2_dsd.model.Cell;
 import com.udesc.t2_dsd.model.Position;
-import com.udesc.t2_dsd_infra.Database;
+import com.udesc.t2_dsd.infra.Database;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;

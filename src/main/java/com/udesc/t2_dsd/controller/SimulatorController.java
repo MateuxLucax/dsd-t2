@@ -3,7 +3,7 @@ package com.udesc.t2_dsd.controller;
 import com.udesc.t2_dsd.model.Car;
 import com.udesc.t2_dsd.model.Position;
 import com.udesc.t2_dsd.view.SimulatorView;
-import com.udesc.t2_dsd_infra.Database;
+import com.udesc.t2_dsd.infra.Database;
 import java.util.Map;
 
 public class SimulatorController {

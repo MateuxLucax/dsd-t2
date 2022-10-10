@@ -1,4 +1,4 @@
-package com.udesc.t2_dsd_infra;
+package com.udesc.t2_dsd.infra;
 
 import com.udesc.t2_dsd.model.Car;
 import com.udesc.t2_dsd.model.Position;
