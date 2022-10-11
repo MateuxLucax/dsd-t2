@@ -30,6 +30,10 @@ public class World {
         return cells[i][j];
     }
 
+    public Cell get(Position pos) {
+        return cells[pos.getRow()][pos.getColumn()];
+    }
+
     public HashMap<Position, Cell> getEntryPoints() {
         return entryPoints;
     }
@@ -66,7 +70,7 @@ public class World {
         // TOP
         for (int i = 0; i < this.cols; i++) {
             Cell cell = this.cells[0][i];
-            if (cell.getEcell() == ICell.ROAD_DOWN) {
+            if (cell.getEcell() == ICell.ROAD_SOUTH) {
                 entryPoints.put(cell.getPosition(), cell);
             }
         }
@@ -74,7 +78,7 @@ public class World {
         // LEFT
         for (int i = 0; i < this.rows; i++) {
             Cell cell = this.cells[i][0];
-            if (cell.getEcell() == ICell.ROAD_RIGHT) {
+            if (cell.getEcell() == ICell.ROAD_EAST) {
                 entryPoints.put(cell.getPosition(), cell);
             }
         }
@@ -82,7 +86,7 @@ public class World {
         // BOTTOM
         for (int i = 0; i < this.cols; i++) {
             Cell cell = this.cells[this.rows-1][i];
-            if (cell.getEcell() == ICell.ROAD_UP) {
+            if (cell.getEcell() == ICell.ROAD_NORTH) {
                 entryPoints.put(cell.getPosition(), cell);
             }
         }
@@ -90,7 +94,7 @@ public class World {
         // RIGHT
         for (int i = 0; i < this.rows; i++) {
             Cell cell = this.cells[i][this.cols-1];
-            if (cell.getEcell() == ICell.ROAD_LEFT) {
+            if (cell.getEcell() == ICell.ROAD_WEST) {
                 entryPoints.put(cell.getPosition(), cell);
             }
         }

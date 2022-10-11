@@ -60,16 +60,16 @@ public class Cell {
             case NOTHING:
                 color = Color.WHITE;
                 break;
-            case ROAD_UP:
+            case ROAD_NORTH:
                 color = Color.decode("#FCD5B4");
                 break;
-            case ROAD_RIGHT:
+            case ROAD_EAST:
                 color = Color.decode("#B8CCE4");
                 break;
-            case ROAD_DOWN:
+            case ROAD_SOUTH:
                 color = Color.decode("#E6B8B7");
                 break;
-            case ROAD_LEFT:
+            case ROAD_WEST:
                 color = Color.decode("#D8E4BC");
                 break;
             default:

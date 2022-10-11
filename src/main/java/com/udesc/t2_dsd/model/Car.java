@@ -3,15 +3,45 @@ package com.udesc.t2_dsd.model;
 import com.udesc.t2_dsd.util.Constants;
 import com.udesc.t2_dsd.infra.Database;
 
+import java.util.ArrayDeque;
+import java.util.EnumMap;
+import java.util.Queue;
+
 public class Car extends Thread {
+
+    private static final EnumMap<DirChange, DirChange[]> crossingPaths;
+
+    static {
+        crossingPaths = new EnumMap<>(DirChange.class);
+
+        crossingPaths.put(DirChange.RIGHT_TURN, new DirChange[]{
+            DirChange.RIGHT_TURN
+        });
+
+        crossingPaths.put(DirChange.FORWARDS, new DirChange[]{
+            DirChange.FORWARDS,
+            DirChange.FORWARDS
+        });
+
+        crossingPaths.put(DirChange.LEFT_TURN, new DirChange[]{
+            DirChange.FORWARDS,
+            DirChange.LEFT_TURN,
+            DirChange.FORWARDS
+        });
+    }
+
     private long sleep;
     private Position position;
     private Database db;
+
+    // fila das posições que o carro vai tomar a partir de quando estiver dentro do cruzamento
+    private Queue<Position> remainingCrossingPositions;
     
     public Car(Position position, long sleep) {
         this.sleep = sleep;
         this.position = position;
         this.db = Database.getInstance();
+        remainingCrossingPositions = new ArrayDeque<>();
     }
 
     @Override
@@ -25,20 +55,39 @@ public class Car extends Thread {
             }
         }
     }
-    
+
     public void tryMove() {
-        Position nextMove = getMove(position);
-        
-        if (validMove(nextMove)) {
-            if (canMove(nextMove)) {
-                nextMove = verifyCrossing(nextMove);
-                handleMove(nextMove);
+        var cell = db.getWorld().get(position).getEcell();
+
+        if (cell.isRoad()) {
+            var positionAhead = cell.roadDirection().moved(position);
+            if (!validMove(positionAhead)) {
+                handleRemove();
             }
-        } else {
-            handleRemove();
+
+            handleMove(positionAhead);
+
+            var cellAhead = db.getWorld().get(positionAhead).getEcell();
+            if (cellAhead.isCrossing()) {
+                var chosenCrossingExit = DirChange.random();
+                var path = crossingPaths.get(chosenCrossingExit);
+
+                var currDir = cell.roadDirection();
+                var currPos = positionAhead;
+
+                for (var dirChange : path) {
+                    currDir = dirChange.changed(currDir);
+                    currPos = currDir.moved(currPos);
+                    remainingCrossingPositions.add(currPos);
+                }
+            }
+        }
+        else if (cell.isCrossing()) {
+            var positionAhead = remainingCrossingPositions.remove();
+            handleMove(positionAhead);
         }
     }
-
+    
     private void handleMove(Position nextMove) {
         db.getCars().put(nextMove, this);
         db.getCars().remove(position);
@@ -47,54 +96,7 @@ public class Car extends Thread {
     
     private boolean canMove(Position movePosition) {
         Car car = db.getCars().get(movePosition);
-        if (car != null) {
-            return false;
-        }
-        return true;
-    }
-    
-    private Position verifyCrossing(Position movePosition) {
-        Cell cell = db.getWorld().get(movePosition.getRow(), movePosition.getColumn());
-        
-        if (!Constants.normalCells.contains(cell.getEcell())) {
-            movePosition = (Position) position.clone();
-            int row = movePosition.getRow();
-            int column = movePosition.getColumn();
-            
-            switch (cell.getEcell()) {
-                case CROSSING_DOWN:
-                    movePosition.setRow(row + 2);
-                    break;
-                case CROSSING_DOWN_LEFT:
-                    movePosition.setRow(row + 1);
-                    movePosition.setColumn(column -1);
-                    break;
-                case CROSSING_LEFT:
-                    movePosition.setColumn(column -2);
-                    break;
-                case CROSSING_LEFT_UP:
-                    movePosition.setColumn(column -1);
-                    movePosition.setRow(row-1);
-                    break;
-                case CROSSING_RIGHT:
-                    movePosition.setColumn(column +2);
-                    break;
-                case CROSSING_RIGHT_DOWN:
-                    movePosition.setColumn(column +1);
-                    movePosition.setRow(row+1);
-                    break;
-                case CROSSING_UP:
-                    movePosition.setRow(row-2);
-                    break;
-                case CROSSING_UP_RIGHT:
-                    movePosition.setRow(row-1);
-                    movePosition.setColumn(column+1);
-                    break;
-                default:
-                    throw new AssertionError();
-            }
-        }
-        return movePosition;
+        return car == null;
     }
     
     private boolean validMove(Position movePosition) {
@@ -113,32 +115,5 @@ public class Car extends Thread {
         Car remove = db.getCars().remove(position);
         System.out.println(remove);
         stop();
-    }
-    
-    private Position getMove(Position currentPosition) {
-        Cell cell = db.getWorld().get(currentPosition.getRow(), currentPosition.getColumn());
-        Position position = (Position) currentPosition.clone();
-        int row = currentPosition.getRow();
-        int column = currentPosition.getColumn();
-        
-        switch (cell.getEcell()) {
-            case ROAD_UP:
-                position.setRow(row-1);
-                break;
-            case ROAD_DOWN:
-                position.setRow(row+1);
-                break;
-            case ROAD_LEFT:
-                position.setColumn(column-1);
-                break;
-            case ROAD_RIGHT:
-                position.setColumn(column+1);
-                break;
-            default:
-                position.setColumn(column+1);
-                break;
-        }
-        
-        return position;
     }
 }

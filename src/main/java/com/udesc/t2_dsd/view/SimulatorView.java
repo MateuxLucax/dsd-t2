@@ -41,6 +41,9 @@ public class SimulatorView extends javax.swing.JFrame {
         jTable1.setMinimumSize(dimension);
         jTable1.setMaximumSize(dimension);
         
+
+        // TODO table is too big for 1366x768
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

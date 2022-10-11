@@ -11,5 +11,5 @@ import java.util.List;
 public class Constants {
     public static int ROWS;
     public static int COLUMNS;
-    public static List<ICell> normalCells = Arrays.asList(ICell.ROAD_DOWN, ICell.ROAD_LEFT, ICell.ROAD_RIGHT, ICell.ROAD_UP);
+    public static List<ICell> normalCells = Arrays.asList(ICell.ROAD_SOUTH, ICell.ROAD_WEST, ICell.ROAD_EAST, ICell.ROAD_NORTH);
 }
