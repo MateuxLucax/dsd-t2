@@ -63,6 +63,7 @@ public class Car extends Thread {
             var positionAhead = cell.roadDirection().moved(position);
             if (!validMove(positionAhead)) {
                 handleRemove();
+                return;
             }
 
             handleMove(positionAhead);
