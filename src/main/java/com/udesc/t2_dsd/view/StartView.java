@@ -4,13 +4,13 @@
  */
 package com.udesc.t2_dsd.view;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
 import com.udesc.t2_dsd.controller.StartController;
 import com.udesc.t2_dsd.util.Util;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 /**
  *
@@ -127,7 +127,7 @@ public class StartView extends javax.swing.JFrame {
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
          try {
-             UIManager.setLookAndFeel(new FlatDarculaLaf());
+             UIManager.setLookAndFeel(new NimbusLookAndFeel());
         } catch (Exception e) {
             e.printStackTrace();
         }

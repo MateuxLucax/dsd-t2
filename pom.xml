@@ -11,15 +11,5 @@
         <maven.compiler.target>16</maven.compiler.target>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>flatlaf</groupId>
-            <artifactId>flatlaf</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>flatlaf-intellij</groupId>
-            <artifactId>flatlaf-intellij</artifactId>
-            <version>1.0</version>
-        </dependency>
     </dependencies>
 </project>
