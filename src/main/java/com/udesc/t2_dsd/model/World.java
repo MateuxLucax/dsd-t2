@@ -1,19 +1,21 @@
 package com.udesc.t2_dsd.model;
 
 import com.udesc.t2_dsd.util.Constants;
-import java.util.HashMap;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class World {
     private final Cell[][] cells;
     private final int rows;
     private final int cols;
-    private HashMap<Position, Cell> entryPoints;
+    private List<Position> entryPoints;
 
     private World(int rows, int cols) {
         this.cells = new Cell[rows][cols];
         this.rows = rows;
         this.cols = cols;
-        this.entryPoints = new HashMap<>();
+        entryPoints = new ArrayList<>();
         Constants.ROWS = rows;
         Constants.COLUMNS = cols;
     }
@@ -34,7 +36,7 @@ public class World {
         return cells[pos.getRow()][pos.getColumn()];
     }
 
-    public HashMap<Position, Cell> getEntryPoints() {
+    public List<Position> getEntryPoints() {
         return entryPoints;
     }
 
@@ -54,7 +56,7 @@ public class World {
             var i = l - 2;
             for (var j = 0; j < cols; j++) {
                 var id = Integer.parseInt(cells[j]);
-                var cell = Cell.from(id, i, j);
+                var cell = Cell.from(id);
                 
                 if (cell == null) {
                     throw new RuntimeException("Invalid cell id" + id);
@@ -62,40 +64,44 @@ public class World {
                 world.cells[i][j] = cell;
             }
         }
+
+        world.generateEntryPoints();
+
         return world;
     }
     
-    public void verifyEntryPoints() {
+    private void generateEntryPoints() {
         entryPoints.clear();
+
         // TOP
         for (int i = 0; i < this.cols; i++) {
             Cell cell = this.cells[0][i];
-            if (cell.getEcell() == ICell.ROAD_SOUTH) {
-                entryPoints.put(cell.getPosition(), cell);
+            if (cell == Cell.ROAD_SOUTH) {
+                entryPoints.add(new Position(0, i));
             }
         }
         
         // LEFT
         for (int i = 0; i < this.rows; i++) {
             Cell cell = this.cells[i][0];
-            if (cell.getEcell() == ICell.ROAD_EAST) {
-                entryPoints.put(cell.getPosition(), cell);
+            if (cell == Cell.ROAD_EAST) {
+                entryPoints.add(new Position(i, 0));
             }
         }
         
         // BOTTOM
         for (int i = 0; i < this.cols; i++) {
             Cell cell = this.cells[this.rows-1][i];
-            if (cell.getEcell() == ICell.ROAD_NORTH) {
-                entryPoints.put(cell.getPosition(), cell);
+            if (cell == Cell.ROAD_NORTH) {
+                entryPoints.add(new Position(rows-1, i));
             }
         }
         
         // RIGHT
         for (int i = 0; i < this.rows; i++) {
             Cell cell = this.cells[i][this.cols-1];
-            if (cell.getEcell() == ICell.ROAD_WEST) {
-                entryPoints.put(cell.getPosition(), cell);
+            if (cell == Cell.ROAD_WEST) {
+                entryPoints.add(new Position(i, cols-1));
             }
         }
     }

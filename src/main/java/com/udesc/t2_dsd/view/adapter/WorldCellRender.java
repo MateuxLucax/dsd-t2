@@ -28,7 +28,7 @@ public class WorldCellRender extends DefaultTableCellRenderer {
         Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         
         Cell cell = (Cell) value;
-        setBackground(cell.getColor());
+        setBackground(cell.toColor());
         setFont(new Font("Dialog", Font.BOLD, 14));
         setBorder(border);
         

@@ -28,8 +28,7 @@ public class StartController {
         if (file != null && file.exists()) {
             try {
                 String content = Files.readString(file.toPath());
-                World world = World.from(content).from(content);
-                world.verifyEntryPoints();
+                World world = World.from(content);
                 System.out.println(world.toString() + '\n');
                 
                 Database db = Database.getInstance();

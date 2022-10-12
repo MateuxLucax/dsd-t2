@@ -57,7 +57,7 @@ public class Car extends Thread {
     }
 
     public void tryMove() {
-        var cell = db.getWorld().get(position).getEcell();
+        var cell = db.getWorld().get(position);
 
         if (cell.isRoad()) {
             var positionAhead = cell.roadDirection().moved(position);
@@ -68,7 +68,7 @@ public class Car extends Thread {
 
             handleMove(positionAhead);
 
-            var cellAhead = db.getWorld().get(positionAhead).getEcell();
+            var cellAhead = db.getWorld().get(positionAhead);
             if (cellAhead.isCrossing()) {
                 var chosenCrossingExit = DirChange.random();
                 var path = crossingPaths.get(chosenCrossingExit);
