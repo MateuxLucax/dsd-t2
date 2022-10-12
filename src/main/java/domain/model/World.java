@@ -1,6 +1,6 @@
-package com.udesc.t2_dsd.model;
+package domain.model;
 
-import com.udesc.t2_dsd.util.Constants;
+import domain.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;

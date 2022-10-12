@@ -1,27 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-package com.udesc.t2_dsd.view;
+package presentation.view;
 
-import com.udesc.t2_dsd.controller.StartController;
-import com.udesc.t2_dsd.util.Util;
+import domain.controller.StartController;
+import presentation.adapter.Util;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
-/**
- *
- * @author guilu
- */
 public class StartView extends javax.swing.JFrame {
-    private StartController controller;
+    private final StartController controller;
             
     public StartView() {
-        this.controller = new StartController(StartView.this);
-        Util.centerFrame(this);
+        this.controller = new StartController();
+        Util.centerFrame(StartView.this);
         initComponents();
     }
 
@@ -114,16 +106,14 @@ public class StartView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbSelecionarActionPerformed
-        this.controller.handleSelectFile();
+        String selectedFile = this.controller.handleSelectFile(this);
+        getjTfile().setText(selectedFile);
     }//GEN-LAST:event_jbSelecionarActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.controller.handleConfirm();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
          try {

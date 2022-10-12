@@ -1,9 +1,9 @@
-package com.udesc.t2_dsd.view.adapter;
+package presentation.adapter;
 
-import com.udesc.t2_dsd.model.Car;
-import com.udesc.t2_dsd.model.Cell;
-import com.udesc.t2_dsd.model.Position;
-import com.udesc.t2_dsd.infra.Database;
+import domain.model.Car;
+import domain.model.Cell;
+import domain.model.Position;
+import data.datasource.Database;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -32,7 +32,7 @@ public class WorldCellRender extends DefaultTableCellRenderer {
         setFont(new Font("Dialog", Font.BOLD, 14));
         setBorder(border);
         
-        Car car = db.getCars().get(new Position(row, column));
+        Car car = db.getCar(new Position(row, column));
         if (car != null) {
             setFont(new Font("Serif", Font.BOLD, 24));
             setText("🚗");

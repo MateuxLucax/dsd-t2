@@ -1,7 +1,7 @@
-package com.udesc.t2_dsd.model;
+package domain.model;
 
-import com.udesc.t2_dsd.util.Constants;
-import com.udesc.t2_dsd.infra.Database;
+import domain.util.Constants;
+import data.datasource.Database;
 
 import java.awt.*;
 import java.util.ArrayDeque;
@@ -56,6 +56,7 @@ public class Car extends Thread {
         while (true) {
             try {
                 Thread.sleep(sleep);
+                shouldStop();
                 tryMove();
             } catch (InterruptedException ex) {
                 System.out.println("Interrupted (ok)");
@@ -80,7 +81,7 @@ public class Car extends Thread {
 
             if (nextCell.isRoad()) {
                 // wait for next position to become available
-                while (db.getCars().get(nextPosition) != null);
+                while (db.getCar(nextPosition) != null);
             } else {
                 assert nextCell.isCrossing();
 
@@ -111,8 +112,8 @@ public class Car extends Thread {
 
 
     private void handleMove(Position nextMove) {
-        db.getCars().put(nextMove, this);
-        db.getCars().remove(position);
+        db.setCar(nextMove, this);
+        db.removeCar(position);
         position.update(nextMove);
     }
     
@@ -129,8 +130,15 @@ public class Car extends Thread {
     }
     
     private void handleRemove() {
-        Car remove = db.getCars().remove(position);
+        Car remove = db.removeCar(position);
         System.out.println(remove);
         stop();
+    }
+    
+    private void shouldStop() {
+        Status status = db.getStatus();
+        if (status != Status.RUNNING) {
+            stop();
+        }
     }
 }

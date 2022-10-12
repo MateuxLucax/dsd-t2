@@ -1,9 +1,9 @@
-package com.udesc.t2_dsd.controller;
+package domain.controller;
 
-import com.udesc.t2_dsd.model.Car;
-import com.udesc.t2_dsd.model.Position;
-import com.udesc.t2_dsd.infra.Database;
-import com.udesc.t2_dsd.util.Constants;
+import domain.model.Car;
+import domain.model.Position;
+import data.datasource.Database;
+import domain.util.Constants;
 
 import java.awt.*;
 import java.util.List;
@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Random;
 
 public class CarSpawner extends Thread {
-
     private final Random rng = new Random();
     private final int carCount;
 
@@ -47,8 +46,6 @@ public class CarSpawner extends Thread {
         while (true) {            
             try {
                 Thread.sleep(Constants.carSpawnIntervalMs);
-                System.out.println("Executando runner: " + System.currentTimeMillis() + " - " + db.getCars().size());
-                
                 List<Position> entryPoints = db.getWorld().getEntryPoints();
                 for (Position position : entryPoints) {
                     if (db.getCars().size() >= carCount)

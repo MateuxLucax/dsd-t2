@@ -1,25 +1,19 @@
-package com.udesc.t2_dsd.view;
+package presentation.view;
 
-import com.udesc.t2_dsd.view.adapter.WorldTableModel;
-import com.udesc.t2_dsd.view.adapter.WorldCellRender;
-import com.udesc.t2_dsd.controller.SimulatorController;
-import com.udesc.t2_dsd.model.Cell;
-import com.udesc.t2_dsd.util.Refresh;
+import presentation.adapter.WorldTableModel;
+import presentation.adapter.WorldCellRender;
+import domain.controller.SimulatorController;
+import domain.model.Cell;
 import java.awt.Dimension;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
-public class SimulatorView extends javax.swing.JFrame {
-    private SimulatorController controller;
-    private WorldTableModel tableModel = new WorldTableModel();
-    private Refresh refresh;
+public class SimulatorView extends javax.swing.JFrame implements UpdatableSimulatorView {
+    private final SimulatorController controller;
+    private final WorldTableModel tableModel = new WorldTableModel();
   
     public SimulatorView() {
         this.controller = new SimulatorController(SimulatorView.this);
         initComponents();
         applyDefaults();
-        refresh = new Refresh(jTable1);
-        refresh.start();
     }
 
     private void applyDefaults() {
@@ -40,19 +34,14 @@ public class SimulatorView extends javax.swing.JFrame {
         jTable1.setSize(dimension);
         jTable1.setMinimumSize(dimension);
         jTable1.setMaximumSize(dimension);
-        
-
-        // TODO table is too big for 1366x768
-
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                refresh.stop();
-            }
-        });
     }
     
-    public void updateTable() {
+    @Override
+    public void updateView() {
+        updateTable();
+    }
+    
+    private void updateTable() {
         jTable1.repaint();
     }
     
@@ -143,7 +132,7 @@ public class SimulatorView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBstartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBstartActionPerformed
-        this.controller.handleStart();
+        this.controller.handleStart(getCarCount());
     }//GEN-LAST:event_jBstartActionPerformed
 
     private void jBstopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBstopActionPerformed

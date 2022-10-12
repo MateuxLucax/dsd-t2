@@ -1,4 +1,4 @@
-package com.udesc.t2_dsd.model;
+package domain.model;
 
 public enum Direction {
     NORTH,

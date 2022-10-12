@@ -1,8 +1,8 @@
-package com.udesc.t2_dsd.view.adapter;
+package presentation.adapter;
 
-import com.udesc.t2_dsd.model.Cell;
-import com.udesc.t2_dsd.infra.Database;
-import com.udesc.t2_dsd.model.World;
+import domain.model.Cell;
+import data.datasource.Database;
+import domain.model.World;
 import javax.swing.table.AbstractTableModel;
 
 public class WorldTableModel extends AbstractTableModel {

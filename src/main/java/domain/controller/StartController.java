@@ -1,27 +1,23 @@
-package com.udesc.t2_dsd.controller;
+package domain.controller;
 
-import com.udesc.t2_dsd.model.World;
-import com.udesc.t2_dsd.util.Util;
-import com.udesc.t2_dsd.view.SimulatorView;
-import com.udesc.t2_dsd.view.StartView;
-import com.udesc.t2_dsd.infra.Database;
+import domain.model.World;
+import presentation.adapter.Util;
+import presentation.view.SimulatorView;
+import data.datasource.Database;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import javax.swing.JFrame;
 
 public class StartController {
-    private StartView view;
     private File file;
-
-    public StartController(StartView view) {
-        this.view = view;
-    }
     
-    public void handleSelectFile() {
+    public String handleSelectFile(JFrame view) {
         this.file = Util.loadFileSelector(view).getSelectedFile();
         if (file != null && file.exists()) {
-            view.getjTfile().setText(file.getAbsolutePath());
+            return file.getAbsolutePath();
         }
+        return "";
     }
     
     public void handleConfirm() {
