@@ -3,6 +3,7 @@ package com.udesc.t2_dsd.model;
 import com.udesc.t2_dsd.util.Constants;
 import com.udesc.t2_dsd.infra.Database;
 
+import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.EnumMap;
 import java.util.Queue;
@@ -30,18 +31,24 @@ public class Car extends Thread {
         });
     }
 
-    private long sleep;
-    private Position position;
-    private Database db;
+    private final long sleep;
+    private final Color color;
+    private final Position position;
+    private final Database db;
 
-    // fila das posições que o carro vai tomar a partir de quando estiver dentro do cruzamento
-    private Queue<Position> remainingCrossingPositions;
+    // fila das posições que o carro vai tomar pelo cruzamento
+    private final Queue<Position> remainingCrossingPositions;
     
-    public Car(Position position, long sleep) {
+    public Car(Position position, long sleep, Color color) {
         this.sleep = sleep;
+        this.color = color;
         this.position = position;
         this.db = Database.getInstance();
         remainingCrossingPositions = new ArrayDeque<>();
+    }
+
+    public Color getColor() {
+        return this.color;
     }
 
     @Override

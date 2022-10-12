@@ -36,7 +36,7 @@ public class WorldCellRender extends DefaultTableCellRenderer {
         if (car != null) {
             setFont(new Font("Serif", Font.BOLD, 24));
             setText("🚗");
-            setForeground(Color.RED);
+            setForeground(car.getColor());
         } else {
             setFont(new Font("Serif", Font.BOLD, 18));
             setForeground(Color.GRAY);
