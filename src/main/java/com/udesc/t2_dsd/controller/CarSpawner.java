@@ -39,7 +39,7 @@ public class CarSpawner extends Thread {
                     Map<Position, Car> cars = db.getCars();
 
                     while (cars.get(position) != null);
-                    int speed = rng.nextInt(Constants.minCarSpeedMs, 1 + Constants.maxCarSpeedMs);
+                    int speed = rng.nextInt(Constants.minCarIntervalMs, 1 + Constants.maxCarIntervalMs);
                     Car car = new Car((Position) position.clone(), speed);
                     cars.put(position, car);
                     car.start();

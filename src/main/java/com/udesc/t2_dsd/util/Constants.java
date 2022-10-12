@@ -6,6 +6,6 @@ public class Constants {
 
     public static final int refreshIntervalMs = 100;  // deve ser menor que todos os outros intervalos
     public static final int carSpawnIntervalMs = 200;
-    public static final int minCarSpeedMs = 300;
-    public static final int maxCarSpeedMs = 1500;
+    public static final int minCarIntervalMs = 300;
+    public static final int maxCarIntervalMs = 1500;
 }
