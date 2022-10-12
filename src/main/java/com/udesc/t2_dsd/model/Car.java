@@ -51,30 +51,39 @@ public class Car extends Thread {
                 Thread.sleep(sleep);
                 tryMove();
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                System.out.println("Interrupted (ok)");
             }
         }
     }
 
     public void tryMove() {
+        Position nextPosition;
+
         var cell = db.getWorld().get(position);
 
         if (cell.isRoad()) {
-            var positionAhead = cell.roadDirection().moved(position);
-            if (!validMove(positionAhead)) {
+            nextPosition = cell.roadDirection().moved(position);
+
+            if (!validMove(nextPosition)) {
                 handleRemove();
                 return;
             }
 
-            handleMove(positionAhead);
+            var nextCell = db.getWorld().get(nextPosition);
 
-            var cellAhead = db.getWorld().get(positionAhead);
-            if (cellAhead.isCrossing()) {
+            if (nextCell.isRoad()) {
+                // wait for next position to become available
+                while (db.getCars().get(nextPosition) != null);
+            } else {
+                assert nextCell.isCrossing();
+
+                // TODO mutual exclusion in acquiring those positions
+
                 var chosenCrossingExit = DirChange.random();
                 var path = crossingPaths.get(chosenCrossingExit);
 
                 var currDir = cell.roadDirection();
-                var currPos = positionAhead;
+                var currPos = nextPosition;
 
                 for (var dirChange : path) {
                     currDir = dirChange.changed(currDir);
@@ -82,22 +91,22 @@ public class Car extends Thread {
                     remainingCrossingPositions.add(currPos);
                 }
             }
+        } else {
+            assert cell.isCrossing();
+            assert !remainingCrossingPositions.isEmpty();
+
+            nextPosition = remainingCrossingPositions.remove();
         }
-        else if (cell.isCrossing()) {
-            var positionAhead = remainingCrossingPositions.remove();
-            handleMove(positionAhead);
-        }
+
+        // invariant: at this point nextPosition is available and the car can just move onto it
+        handleMove(nextPosition);
     }
-    
+
+
     private void handleMove(Position nextMove) {
         db.getCars().put(nextMove, this);
         db.getCars().remove(position);
         position.update(nextMove);
-    }
-    
-    private boolean canMove(Position movePosition) {
-        Car car = db.getCars().get(movePosition);
-        return car == null;
     }
     
     private boolean validMove(Position movePosition) {

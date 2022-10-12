@@ -7,9 +7,9 @@ import com.udesc.t2_dsd.infra.Database;
 import java.util.Map;
 
 public class SimulatorController {
-    private SimulatorView view;
-    private Database db;
-    private CarRunner runner;
+    private final SimulatorView view;
+    private final Database db;
+    private CarSpawner spawner;
 
     public SimulatorController(SimulatorView view) {
         this.view = view;
@@ -17,15 +17,15 @@ public class SimulatorController {
     }
     
     public void handleStart() {
-        if (runner != null)
-            this.runner.stop();
+        if (spawner != null)
+            this.spawner.stop();
         
-        runner = new CarRunner(view.getCarCount());
-        runner.start();
+        spawner = new CarSpawner(view.getCarCount());
+        spawner.start();
     };
     
     public void handleStop() {
-        runner.stop();
+        spawner.stop();
         for (Map.Entry<Position, Car> entry : db.getCars().entrySet()) {
             Car car = entry.getValue();
             try {

@@ -12,7 +12,7 @@ public class Refresh extends Thread {
     public void run() {
         while (true) {            
             try {
-                Thread.sleep(500);
+                Thread.sleep(Constants.refreshIntervalMs);
                 table.repaint();
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
