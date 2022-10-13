@@ -64,6 +64,7 @@ public class Car extends Thread {
         }
     }
 
+    @SuppressWarnings("empty-statement")
     public void tryMove() {
         Position nextPosition;
 
@@ -81,17 +82,16 @@ public class Car extends Thread {
 
             if (nextCell.isRoad()) {
                 // wait for next position to become available
-                while (db.getCar(nextPosition) != null);
             } else {
                 assert nextCell.isCrossing();
 
                 // TODO mutual exclusion in acquiring those positions
 
-                var chosenCrossingExit = DirChange.random();
-                var path = crossingPaths.get(chosenCrossingExit);
+                DirChange chosenCrossingExit = DirChange.random();
+                DirChange[] path = crossingPaths.get(chosenCrossingExit);
 
-                var currDir = cell.roadDirection();
-                var currPos = nextPosition;
+                Direction currDir = cell.roadDirection();
+                Position currPos = nextPosition;
 
                 for (var dirChange : path) {
                     currDir = dirChange.changed(currDir);
@@ -106,6 +106,9 @@ public class Car extends Thread {
             nextPosition = remainingCrossingPositions.remove();
         }
 
+        // invariant: confirm that there is no car on nextPosition
+        while (db.getCar(nextPosition) != null);
+        
         // invariant: at this point nextPosition is available and the car can just move onto it
         handleMove(nextPosition);
     }
@@ -131,7 +134,6 @@ public class Car extends Thread {
     
     private void handleRemove() {
         Car remove = db.removeCar(position);
-        System.out.println(remove);
         stop();
     }
     
