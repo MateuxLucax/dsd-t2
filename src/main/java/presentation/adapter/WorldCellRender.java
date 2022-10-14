@@ -34,8 +34,8 @@ public class WorldCellRender extends DefaultTableCellRenderer {
         
         Car car = db.getCar(new Position(row, column));
         if (car != null) {
-            setFont(new Font("Serif", Font.BOLD, 24));
-            setText("🚗");
+            setFont(new Font("Serif", Font.BOLD, 16));
+            setText("" + car.id());
             setForeground(car.getColor());
         } else {
             setFont(new Font("Serif", Font.BOLD, 18));

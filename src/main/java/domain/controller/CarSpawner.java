@@ -24,6 +24,8 @@ public class CarSpawner extends Thread {
         Color.cyan.darker(),
     };
     private int currentColor = 0;
+
+    private int currentId = 0;
     
     public CarSpawner(int carCount) {
         this.carCount = carCount;
@@ -40,11 +42,15 @@ public class CarSpawner extends Thread {
         return carColors[i];
     }
 
+    private int nextId() {
+        return currentId++;
+    }
+
     private synchronized void handleCars() {
         Database db = Database.getInstance();
-        
-        while (true) {            
-            try {
+
+        try {
+            while (!isInterrupted()) {
                 Thread.sleep(Constants.carSpawnIntervalMs);
                 List<Position> entryPoints = db.getWorld().getEntryPoints();
                 for (Position position : entryPoints) {
@@ -55,13 +61,14 @@ public class CarSpawner extends Thread {
 
                     while (cars.get(position) != null);
                     int speed = rng.nextInt(Constants.minCarIntervalMs, 1 + Constants.maxCarIntervalMs);
-                    Car car = new Car((Position) position.clone(), speed, nextColor());
+                    Car car = new Car((Position) position.clone(), nextId(), speed, nextColor());
                     cars.put(position, car);
                     car.start();
                 }
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
             }
+        } catch (InterruptedException ex) {
+            System.out.println("Interrupted car spawner (ok)");
+            currentId = 0;
         }
     }
 }

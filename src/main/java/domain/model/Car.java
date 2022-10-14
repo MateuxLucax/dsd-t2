@@ -32,7 +32,8 @@ public class Car extends Thread {
         });
     }
 
-    private final long sleep;
+    private final int id;
+    private final int sleep;
     private final Color color;
     private final Position position;
     private final Database db;
@@ -43,7 +44,8 @@ public class Car extends Thread {
     // fila paralela à de cima, com os semáforos correspondentes a cada posição
     private final Queue<Semaphore> acquiredCrossingSemaphores;
 
-    public Car(Position position, long sleep, Color color) {
+    public Car(Position position, int id, int sleep, Color color) {
+        this.id = id;
         this.sleep = sleep;
         this.color = color;
         this.position = position;
@@ -56,15 +58,19 @@ public class Car extends Thread {
         return this.color;
     }
 
+    public int id() { return this.id; }
+
     @Override
     public void run() {
-        while (true) {
-            try {
+        try {
+            while (!isInterrupted()) {
                 Thread.sleep(sleep);
                 shouldStop();
                 tryMove();
-            } catch (InterruptedException ex) {
-                System.out.println("Interrupted (ok)");
+            }
+        } catch (InterruptedException ex) {
+            while (!acquiredCrossingSemaphores.isEmpty()) {
+                acquiredCrossingSemaphores.remove().release();
             }
         }
     }
@@ -87,6 +93,7 @@ public class Car extends Thread {
 
             if (nextCell.isRoad()) {
                 // wait for next position to become available
+                while (db.getCar(nextPosition) != null);
             } else {
                 assert nextCell.isCrossing();
 
@@ -118,15 +125,15 @@ public class Car extends Thread {
             acquiredCrossingSemaphores.remove().release();
         }
 
-        // invariant: confirm that there is no car on nextPosition
-        while (db.getCar(nextPosition) != null);
-        
         // invariant: at this point nextPosition is available and the car can just move onto it
+        // either because the next cell is a road and we waited for it to become available
+        // or because it's a crossing and we acquired its semaphores
         handleMove(nextPosition);
     }
 
 
-    private void handleMove(Position nextMove) {
+    private synchronized void handleMove(Position nextMove) {
+        if (isInterrupted()) return;
         db.setCar(nextMove, this);
         db.removeCar(position);
         position.update(nextMove);
@@ -146,13 +153,13 @@ public class Car extends Thread {
     
     private void handleRemove() {
         Car remove = db.removeCar(position);
-        stop();
+        interrupt();
     }
     
     private void shouldStop() {
         Status status = db.getStatus();
         if (status != Status.RUNNING) {
-            stop();
+            interrupt();
         }
     }
 }
