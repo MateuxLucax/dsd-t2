@@ -90,8 +90,6 @@ public class Car extends Thread {
             } else {
                 assert nextCell.isCrossing();
 
-                // TODO mutual exclusion in acquiring those positions
-
                 DirChange chosenCrossingExit = DirChange.random();
                 DirChange[] path = crossingPaths.get(chosenCrossingExit);
 
