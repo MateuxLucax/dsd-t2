@@ -91,6 +91,10 @@ public class Car extends Thread {
 
             var nextCell = db.getWorld().get(nextPosition);
 
+            // TODO nas roads as vezes dois carros se sobrepõem, então talvez toda cell teria
+            //   que ter um semaphore mesmo (adquirido ao entrar, soltado logo após sair da posição)
+            //   (mas p/ crossing funciona que nem agora)
+
             if (nextCell.isRoad()) {
                 // wait for next position to become available
                 while (db.getCar(nextPosition) != null);

@@ -21,7 +21,6 @@ public class CarSpawner extends Thread {
         Color.blue,
         Color.orange.darker().darker(),
         Color.green.darker(),
-        Color.pink.darker().darker(),
         Color.cyan.darker(),
     };
     private int currentColor = 0;
