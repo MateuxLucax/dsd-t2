@@ -4,18 +4,28 @@ import domain.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 public class World {
     private final Cell[][] cells;
     private final int rows;
     private final int cols;
-    private List<Position> entryPoints;
+    private final List<Position> entryPoints;
+
+    // um semáforo por posição do cruzamento
+    private final Semaphore[][] crossingSemaphores;
+
+    // um monitor para cada cruzamento inteiro (todas as 4 posições)
+    // evitamos deadlocks garantindo que só um carro adquire os semáforos do cruzamento inteiro por vez
+    private final Object[][] crossingMonitor;
 
     private World(int rows, int cols) {
         this.cells = new Cell[rows][cols];
         this.rows = rows;
         this.cols = cols;
         entryPoints = new ArrayList<>();
+        crossingSemaphores = new Semaphore[rows][cols];
+        crossingMonitor = new Object[rows][cols];
         Constants.ROWS = rows;
         Constants.COLUMNS = cols;
     }
@@ -62,12 +72,58 @@ public class World {
                     throw new RuntimeException("Invalid cell id" + id);
                 }
                 world.cells[i][j] = cell;
+
+                if (cell.isCrossing()) {
+                    world.crossingSemaphores[i][j] = new Semaphore(1);
+                }
+            }
+        }
+
+        for (var i = 0; i < rows; i++) {
+            for (var j = 0; j < rows; j++) {
+                var cell = world.cells[i][j];
+                if (!cell.isCrossing()) continue;
+                if (world.crossingMonitor[i][j] != null) continue;
+
+                var isCrossingTopLeftCell
+                    =  world.cells[i+1][j].isCrossing()
+                    && world.cells[i][j+1].isCrossing()
+                    && world.cells[i+1][j+1].isCrossing();
+
+                if (isCrossingTopLeftCell) {
+                    var monitor = new Object();
+                    world.crossingMonitor[i][j]
+                        = world.crossingMonitor[i+1][j]
+                        = world.crossingMonitor[i][j+1]
+                        = world.crossingMonitor[i+1][j+1]
+                        = monitor;
+                }
             }
         }
 
         world.generateEntryPoints();
 
         return world;
+    }
+
+    public Semaphore getSemaphore(int row, int col) {
+        var cell = get(row, col);
+        if (!cell.isCrossing()) throw new RuntimeException("getSemaphore() on non-crossing cell");
+        return crossingSemaphores[row][col];
+    }
+
+    public Semaphore getSemaphore(Position pos) {
+        return getSemaphore(pos.getRow(), pos.getColumn());
+    }
+
+    public Object crossingMonitor(int anyCrossingRow, int anyCrossingCol) {
+        var cell = get(anyCrossingRow, anyCrossingCol);
+        if (!cell.isCrossing()) throw new RuntimeException("crossingLock() on non-crossing cell");
+        return crossingMonitor[anyCrossingRow][anyCrossingCol];
+    }
+
+    public Object crossingMonitor(Position anyCrossingPos) {
+        return crossingMonitor(anyCrossingPos.getRow(), anyCrossingPos.getColumn());
     }
     
     private void generateEntryPoints() {

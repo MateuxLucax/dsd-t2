@@ -7,6 +7,7 @@ import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.EnumMap;
 import java.util.Queue;
+import java.util.concurrent.Semaphore;
 
 public class Car extends Thread {
 
@@ -38,13 +39,17 @@ public class Car extends Thread {
 
     // fila das posições que o carro vai tomar pelo cruzamento
     private final Queue<Position> remainingCrossingPositions;
-    
+
+    // fila paralela à de cima, com os semáforos correspondentes a cada posição
+    private final Queue<Semaphore> acquiredCrossingSemaphores;
+
     public Car(Position position, long sleep, Color color) {
         this.sleep = sleep;
         this.color = color;
         this.position = position;
         this.db = Database.getInstance();
         remainingCrossingPositions = new ArrayDeque<>();
+        acquiredCrossingSemaphores = new ArrayDeque<>();
     }
 
     public Color getColor() {
@@ -65,7 +70,7 @@ public class Car extends Thread {
     }
 
     @SuppressWarnings("empty-statement")
-    public void tryMove() {
+    public void tryMove() throws InterruptedException {
         Position nextPosition;
 
         var cell = db.getWorld().get(position);
@@ -93,10 +98,18 @@ public class Car extends Thread {
                 Direction currDir = cell.roadDirection();
                 Position currPos = nextPosition;
 
-                for (var dirChange : path) {
-                    currDir = dirChange.changed(currDir);
-                    currPos = currDir.moved(currPos);
-                    remainingCrossingPositions.add(currPos);
+                synchronized (db.getWorld().crossingMonitor(nextPosition)) {
+                    for (var dirChange : path) {
+                        var semaphore = db.getWorld().getSemaphore(currPos);
+                        semaphore.acquire();
+                        acquiredCrossingSemaphores.add(semaphore);
+                        // importante vir antes porque o último currPos é fora do cruzamento
+
+                        currDir = dirChange.changed(currDir);
+                        currPos = currDir.moved(currPos);
+
+                        remainingCrossingPositions.add(currPos);
+                    }
                 }
             }
         } else {
@@ -104,6 +117,7 @@ public class Car extends Thread {
             assert !remainingCrossingPositions.isEmpty();
 
             nextPosition = remainingCrossingPositions.remove();
+            acquiredCrossingSemaphores.remove().release();
         }
 
         // invariant: confirm that there is no car on nextPosition

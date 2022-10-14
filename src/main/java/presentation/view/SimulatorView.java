@@ -11,8 +11,8 @@ public class SimulatorView extends javax.swing.JFrame implements UpdatableSimula
     private final WorldTableModel tableModel = new WorldTableModel();
   
     public SimulatorView() {
-        this.controller = new SimulatorController(SimulatorView.this);
         initComponents();
+        this.controller = new SimulatorController(SimulatorView.this);
         applyDefaults();
     }
 
