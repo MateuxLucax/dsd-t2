@@ -19,16 +19,21 @@ public class SimulatorController {
         refresh.start();
     }
     
-    public void handleStart(int carCount) {
+    public void handleStart(int carCount, int interval) {
         db.setStatus(Status.RUNNING);
         handleStopSpawner();
         
-        spawner = new CarSpawner(carCount);
+        spawner = new CarSpawner(carCount, interval);
         spawner.start();
     };
     
     public void handleStop() {
         db.setStatus(Status.STOPPED);
+        handleStopSpawner();
+        stopCars();
+    }
+    
+    public void handleStopAndWait() {
         handleStopSpawner();
     }
     
@@ -36,13 +41,15 @@ public class SimulatorController {
         if (spawner != null) {
             spawner.stop();
         }
-        
+    };
+    
+    private void stopCars() {
         for (Map.Entry<Position, Car> entry : db.getCars().entrySet()) {
             Car car = entry.getValue();
             car.stop();
         }
         
         db.clearCars();
-    };
+    }
 
 }

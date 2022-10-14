@@ -13,6 +13,7 @@ import java.util.Random;
 public class CarSpawner extends Thread {
     private final Random rng = new Random();
     private final int carCount;
+    private final long interval;
 
     private final static Color[] carColors = {
         Color.red,
@@ -25,8 +26,9 @@ public class CarSpawner extends Thread {
     };
     private int currentColor = 0;
     
-    public CarSpawner(int carCount) {
+    public CarSpawner(int carCount, int interval) {
         this.carCount = carCount;
+        this.interval = interval * 1000;
     }
     
     @Override
@@ -40,7 +42,7 @@ public class CarSpawner extends Thread {
         return carColors[i];
     }
 
-    private synchronized void handleCars() {
+    private void handleCars() {
         Database db = Database.getInstance();
         
         while (true) {            
@@ -58,6 +60,8 @@ public class CarSpawner extends Thread {
                     Car car = new Car((Position) position.clone(), speed, nextColor());
                     cars.put(position, car);
                     car.start();
+                    if (interval > 0)
+                        Thread.sleep(interval);
                 }
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
