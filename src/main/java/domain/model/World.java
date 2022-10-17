@@ -118,7 +118,8 @@ public class World {
 
     public Object crossingMonitor(int anyCrossingRow, int anyCrossingCol) {
         var cell = get(anyCrossingRow, anyCrossingCol);
-        if (!cell.isCrossing()) throw new RuntimeException("crossingLock() on non-crossing cell");
+        if (!cell.isCrossing()) 
+            throw new RuntimeException("crossingLock() on non-crossing cell");
         return crossingMonitor[anyCrossingRow][anyCrossingCol];
     }
 
