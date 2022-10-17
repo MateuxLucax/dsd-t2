@@ -13,7 +13,7 @@ public class World {
     private final List<Position> entryPoints;
 
     // um semáforo por posição do cruzamento
-    private final Semaphore[][] crossingSemaphores;
+    private final Semaphore[][] semaphores;
 
     // um monitor para cada cruzamento inteiro (todas as 4 posições)
     // evitamos deadlocks garantindo que só um carro adquire os semáforos do cruzamento inteiro por vez
@@ -24,7 +24,7 @@ public class World {
         this.rows = rows;
         this.cols = cols;
         entryPoints = new ArrayList<>();
-        crossingSemaphores = new Semaphore[rows][cols];
+        semaphores = new Semaphore[rows][cols];
         crossingMonitor = new Object[rows][cols];
         Constants.ROWS = rows;
         Constants.COLUMNS = cols;
@@ -73,9 +73,9 @@ public class World {
                 }
                 world.cells[i][j] = cell;
 
-                //if (cell.isCrossing()) {
-                world.crossingSemaphores[i][j] = new Semaphore(1);
-                //}
+                if (!cell.isNothing()) {
+                    world.semaphores[i][j] = new Semaphore(1);
+                }
             }
         }
 
@@ -109,7 +109,7 @@ public class World {
     public Semaphore getSemaphore(int row, int col) {
         //var cell = get(row, col);
         //if (!cell.isCrossing()) throw new RuntimeException("getSemaphore() on non-crossing cell");
-        return crossingSemaphores[row][col];
+        return semaphores[row][col];
     }
 
     public Semaphore getSemaphore(Position pos) {

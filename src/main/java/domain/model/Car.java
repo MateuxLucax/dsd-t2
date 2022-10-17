@@ -108,19 +108,19 @@ public class Car extends Thread {
                 Direction currDir = cell.roadDirection();
                 Position currPos = nextPosition;
 
-                //synchronized (db.getWorld().crossingMonitor(nextPosition)) {
-                for (var dirChange : path) {
-                    var semaphore = db.getWorld().getSemaphore(currPos);
-                    semaphore.acquire();
-                    acquiredCrossingSemaphores.add(semaphore);
-                    // importante vir antes porque o último currPos é fora do cruzamento
+                synchronized (db.getWorld().crossingMonitor(nextPosition)) {
+                    for (var dirChange : path) {
+                        var semaphore = db.getWorld().getSemaphore(currPos);
+                        semaphore.acquire();
+                        acquiredCrossingSemaphores.add(semaphore);
+                        // importante vir antes porque o último currPos é fora do cruzamento
 
-                    currDir = dirChange.changed(currDir);
-                    currPos = currDir.moved(currPos);
+                        currDir = dirChange.changed(currDir);
+                        currPos = currDir.moved(currPos);
 
-                    remainingCrossingPositions.add(currPos);
+                        remainingCrossingPositions.add(currPos);
+                    }
                 }
-                //}
             }
         } else {
             assert cell.isCrossing();
