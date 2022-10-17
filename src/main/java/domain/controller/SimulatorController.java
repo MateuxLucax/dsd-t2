@@ -50,6 +50,7 @@ public class SimulatorController {
         }
         
         db.clearCars();
+        db.release();
     }
 
 }

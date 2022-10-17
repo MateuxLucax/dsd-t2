@@ -73,9 +73,9 @@ public class World {
                 }
                 world.cells[i][j] = cell;
 
-                if (cell.isCrossing()) {
-                    world.crossingSemaphores[i][j] = new Semaphore(1);
-                }
+                //if (cell.isCrossing()) {
+                world.crossingSemaphores[i][j] = new Semaphore(1);
+                //}
             }
         }
 
@@ -107,8 +107,8 @@ public class World {
     }
 
     public Semaphore getSemaphore(int row, int col) {
-        var cell = get(row, col);
-        if (!cell.isCrossing()) throw new RuntimeException("getSemaphore() on non-crossing cell");
+        //var cell = get(row, col);
+        //if (!cell.isCrossing()) throw new RuntimeException("getSemaphore() on non-crossing cell");
         return crossingSemaphores[row][col];
     }
 

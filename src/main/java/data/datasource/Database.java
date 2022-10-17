@@ -4,14 +4,13 @@ import domain.model.Car;
 import domain.model.Position;
 import domain.model.Status;
 import domain.model.World;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Database {
     private static Database database;
     private Database() {
-        this.cars = Collections.synchronizedMap(new HashMap<>());
+        this.cars = new HashMap<>();
         this.status = Status.STOPPED;
     }
     
@@ -54,11 +53,15 @@ public class Database {
         cars.put(position, car);
     }
 
-    public synchronized Map<Position, Car> getCars() {
+    public Map<Position, Car> getCars() {
         return cars;
     };
     
     public void clearCars() {
         this.cars.clear();
     };
+    
+    public void release() {
+        
+    }
 }

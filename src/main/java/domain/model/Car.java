@@ -72,6 +72,7 @@ public class Car extends Thread {
             while (!acquiredCrossingSemaphores.isEmpty()) {
                 acquiredCrossingSemaphores.remove().release();
             }
+            release(position);
         }
     }
 
@@ -97,7 +98,7 @@ public class Car extends Thread {
 
             if (nextCell.isRoad()) {
                 // wait for next position to become available
-                while (db.getCar(nextPosition) != null);
+                db.getWorld().getSemaphore(nextPosition).acquire();
             } else {
                 assert nextCell.isCrossing();
 
@@ -107,34 +108,39 @@ public class Car extends Thread {
                 Direction currDir = cell.roadDirection();
                 Position currPos = nextPosition;
 
-                synchronized (db.getWorld().crossingMonitor(nextPosition)) {
-                    for (var dirChange : path) {
-                        var semaphore = db.getWorld().getSemaphore(currPos);
-                        semaphore.acquire();
-                        acquiredCrossingSemaphores.add(semaphore);
-                        // importante vir antes porque o último currPos é fora do cruzamento
+                //synchronized (db.getWorld().crossingMonitor(nextPosition)) {
+                for (var dirChange : path) {
+                    var semaphore = db.getWorld().getSemaphore(currPos);
+                    semaphore.acquire();
+                    acquiredCrossingSemaphores.add(semaphore);
+                    // importante vir antes porque o último currPos é fora do cruzamento
 
-                        currDir = dirChange.changed(currDir);
-                        currPos = currDir.moved(currPos);
+                    currDir = dirChange.changed(currDir);
+                    currPos = currDir.moved(currPos);
 
-                        remainingCrossingPositions.add(currPos);
-                    }
+                    remainingCrossingPositions.add(currPos);
                 }
+                //}
             }
         } else {
             assert cell.isCrossing();
             assert !remainingCrossingPositions.isEmpty();
 
             nextPosition = remainingCrossingPositions.remove();
-            acquiredCrossingSemaphores.remove().release();
+            acquiredCrossingSemaphores.remove();
         }
 
         // invariant: at this point nextPosition is available and the car can just move onto it
         // either because the next cell is a road and we waited for it to become available
         // or because it's a crossing and we acquired its semaphores
+        var lastPosition = (Position) position.clone();
         handleMove(nextPosition);
+        release(lastPosition);
     }
 
+    private void release(Position pos) {
+        db.getWorld().getSemaphore(pos).release();
+    }
 
     private synchronized void handleMove(Position nextMove) {
         if (isInterrupted()) return;
@@ -156,7 +162,8 @@ public class Car extends Thread {
     }
     
     private void handleRemove() {
-        Car remove = db.removeCar(position);
+        db.removeCar(position);
+        release(position);
         interrupt();
     }
     
