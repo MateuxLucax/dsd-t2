@@ -3,7 +3,9 @@ package domain.controller;
 import domain.model.Car;
 import domain.model.Position;
 import data.datasource.Database;
+import domain.model.Lockable;
 import domain.model.Status;
+import domain.util.Constants;
 import java.util.Map;
 import presentation.view.UpdatableSimulatorView;
 
@@ -31,6 +33,7 @@ public class SimulatorController {
         db.setStatus(Status.STOPPED);
         handleStopSpawner();
         stopCars();
+        cleanupLocks();
     }
     
     public void handleStopAndWait() {
@@ -48,9 +51,17 @@ public class SimulatorController {
             Car car = entry.getValue();
             car.interrupt();
         }
-        
         db.clearCars();
-        db.release();
+    }
+    
+    private void cleanupLocks() {
+        for (int i = 0; i < Constants.ROWS; i++) {
+            for (int j = 0; j < Constants.COLUMNS; j++) {
+                Lockable lock = db.getWorld().getSemaphore(i, j);
+                if (lock != null)
+                    lock.release();
+            }
+        }
     }
 
 }

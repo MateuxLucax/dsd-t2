@@ -4,7 +4,6 @@ import domain.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 public class World {
     private final Cell[][] cells;
@@ -13,7 +12,7 @@ public class World {
     private final List<Position> entryPoints;
 
     // um semáforo por posição do cruzamento
-    private final Semaphore[][] semaphores;
+    private final Lockable[][] semaphores;
 
     // um monitor para cada cruzamento inteiro (todas as 4 posições)
     // evitamos deadlocks garantindo que só um carro adquire os semáforos do cruzamento inteiro por vez
@@ -24,7 +23,7 @@ public class World {
         this.rows = rows;
         this.cols = cols;
         entryPoints = new ArrayList<>();
-        semaphores = new Semaphore[rows][cols];
+        semaphores = new Lockable[rows][cols];
         crossingMonitor = new Object[rows][cols];
         Constants.ROWS = rows;
         Constants.COLUMNS = cols;
@@ -74,7 +73,7 @@ public class World {
                 world.cells[i][j] = cell;
 
                 if (!cell.isNothing()) {
-                    world.semaphores[i][j] = new Semaphore(1);
+                    world.semaphores[i][j] = new CustomSemaphone();
                 }
             }
         }
@@ -106,13 +105,13 @@ public class World {
         return world;
     }
 
-    public Semaphore getSemaphore(int row, int col) {
+    public Lockable getSemaphore(int row, int col) {
         //var cell = get(row, col);
         //if (!cell.isCrossing()) throw new RuntimeException("getSemaphore() on non-crossing cell");
         return semaphores[row][col];
     }
 
-    public Semaphore getSemaphore(Position pos) {
+    public Lockable getSemaphore(Position pos) {
         return getSemaphore(pos.getRow(), pos.getColumn());
     }
 

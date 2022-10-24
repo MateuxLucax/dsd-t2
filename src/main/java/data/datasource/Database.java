@@ -60,8 +60,4 @@ public class Database {
     public void clearCars() {
         this.cars.clear();
     };
-    
-    public void release() {
-        
-    }
 }

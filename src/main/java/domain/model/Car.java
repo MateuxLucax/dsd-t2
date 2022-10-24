@@ -7,7 +7,7 @@ import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.EnumMap;
 import java.util.Queue;
-import java.util.concurrent.Semaphore;
+import java.util.Random;
 
 public class Car extends Thread {
 
@@ -42,7 +42,7 @@ public class Car extends Thread {
     private final Queue<Position> remainingCrossingPositions;
 
     // fila paralela à de cima, com os semáforos correspondentes a cada posição
-    private final Queue<Semaphore> acquiredCrossingSemaphores;
+    private final Queue<Lockable> acquiredCrossingSemaphores;
 
     public Car(Position position, int id, int sleep, Color color) {
         this.id = id;
@@ -69,15 +69,16 @@ public class Car extends Thread {
                 tryMove();
             }
         } catch (InterruptedException ex) {
-            while (!acquiredCrossingSemaphores.isEmpty()) {
-                acquiredCrossingSemaphores.remove().release();
-            }
+            acquiredCrossingSemaphores.forEach(item -> item.release());
+            acquiredCrossingSemaphores.clear();
+            
             release(position);
         }
     }
 
     @SuppressWarnings("empty-statement")
     public void tryMove() throws InterruptedException {
+        Random random = new Random();
         Position nextPosition;
 
         var cell = db.getWorld().get(position);
@@ -107,11 +108,21 @@ public class Car extends Thread {
 
                 Direction currDir = cell.roadDirection();
                 Position currPos = nextPosition;
-
-                synchronized (db.getWorld().crossingMonitor(nextPosition)) {
+                
+                Direction originalCurrDir = Direction.valueOf(currDir.name());
+                Position originalCurrPos = (Position) currPos.clone();
+                
+                boolean acquiredNeededCrossing = false;
+                do {      
+                    boolean tryAcquire = true;
                     for (var dirChange : path) {
                         var semaphore = db.getWorld().getSemaphore(currPos);
-                        semaphore.acquire();
+
+                        // 500, TimeUnit.MILLISECONDS
+                        tryAcquire = semaphore.tryAcquire(50);
+                        if (!tryAcquire) {
+                           break; 
+                        }
                         acquiredCrossingSemaphores.add(semaphore);
                         // importante vir antes porque o último currPos é fora do cruzamento
 
@@ -120,7 +131,19 @@ public class Car extends Thread {
 
                         remainingCrossingPositions.add(currPos);
                     }
-                }
+                    
+                    if (tryAcquire) {
+                        acquiredNeededCrossing = true;
+                        continue;
+                    } else {
+                        acquiredCrossingSemaphores.forEach(item -> item.release());
+                        acquiredCrossingSemaphores.clear();
+                        remainingCrossingPositions.clear();
+                        currDir = originalCurrDir;
+                        currPos = originalCurrPos;
+                    }
+                    sleep(random.nextInt(500));
+                } while (!acquiredNeededCrossing);
             }
         } else {
             assert cell.isCrossing();
@@ -142,7 +165,7 @@ public class Car extends Thread {
         db.getWorld().getSemaphore(pos).release();
     }
 
-    private synchronized void handleMove(Position nextMove) {
+    private void handleMove(Position nextMove) {
         if (isInterrupted()) return;
         db.setCar(nextMove, this);
         db.removeCar(position);
