@@ -2,7 +2,6 @@ package domain.model;
 
 import data.datasource.Database;
 import domain.model.enums.Cell;
-import domain.model.parallel.CustomSemaphone;
 import domain.model.parallel.Lockable;
 import domain.util.Constants;
 
@@ -72,7 +71,11 @@ public class World {
                 world.cells[i][j] = cell;
 
                 if (!cell.isNothing()) {
-                    world.semaphores[i][j] = Database.getInstance().getLockable();
+                    try {
+                        world.semaphores[i][j] = Database.getInstance().getLockable().getDeclaredConstructor().newInstance();
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error while calling new instances of Lockable.");
+                    }
                 }
             }
         }

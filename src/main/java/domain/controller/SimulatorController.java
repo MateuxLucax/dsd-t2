@@ -2,9 +2,9 @@ package domain.controller;
 
 import data.datasource.Database;
 import domain.model.Car;
-import domain.model.parallel.Lockable;
 import domain.model.Position;
 import domain.model.enums.Status;
+import domain.model.parallel.Lockable;
 import domain.util.Constants;
 import presentation.view.UpdatableSimulatorView;
 

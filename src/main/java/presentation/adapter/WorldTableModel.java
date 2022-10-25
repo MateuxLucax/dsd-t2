@@ -1,8 +1,8 @@
 package presentation.adapter;
 
 import data.datasource.Database;
-import domain.model.enums.Cell;
 import domain.model.World;
+import domain.model.enums.Cell;
 
 import javax.swing.table.AbstractTableModel;
 

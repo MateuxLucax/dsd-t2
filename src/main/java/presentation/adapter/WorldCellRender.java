@@ -2,8 +2,8 @@ package presentation.adapter;
 
 import data.datasource.Database;
 import domain.model.Car;
-import domain.model.enums.Cell;
 import domain.model.Position;
+import domain.model.enums.Cell;
 
 import javax.swing.*;
 import javax.swing.border.Border;

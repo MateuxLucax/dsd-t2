@@ -32,13 +32,14 @@ public class StartController {
             Util.message("Nenhum gerenciador de threads selecionado!");
         } else if (file != null && file.exists()) {
             try {
+                Database db = Database.getInstance();
+                db.setLockable(lockable.toClass());
+
                 String content = Files.readString(file.toPath());
                 World world = World.from(content);
                 System.out.println(world.toString() + '\n');
 
-                Database db = Database.getInstance();
                 db.setWorld(world);
-                db.setLockable(lockable.toLockable());
 
                 Util.init(new SimulatorView());
             } catch (IOException ex) {

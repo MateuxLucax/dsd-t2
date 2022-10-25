@@ -7,10 +7,10 @@ import domain.model.parallel.Lockable;
 public enum SelectedLockable {
     SEMAPHOR, MONITOR;
 
-    public Lockable toLockable() {
+    public Class<? extends Lockable> toClass() {
         return switch (this) {
-            case SEMAPHOR -> new CustomSemaphone();
-            case MONITOR -> new CustomMonitor();
+            case SEMAPHOR -> CustomSemaphone.class;
+            case MONITOR -> CustomMonitor.class;
         };
     }
 }
