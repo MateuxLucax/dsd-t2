@@ -1,8 +1,8 @@
 package domain.controller;
 
+import data.datasource.Database;
 import domain.model.Car;
 import domain.model.Position;
-import data.datasource.Database;
 import domain.util.Constants;
 
 import java.awt.*;
@@ -29,7 +29,7 @@ public class CarSpawner extends Thread {
     
     public CarSpawner(int carCount, int interval) {
         this.carCount = carCount;
-        this.interval = interval * 1000;
+        this.interval = interval * 1000L;
     }
     
     @Override

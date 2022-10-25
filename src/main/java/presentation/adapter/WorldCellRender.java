@@ -1,18 +1,14 @@
 package presentation.adapter;
 
-import domain.model.Car;
-import domain.model.Cell;
-import domain.model.Position;
 import data.datasource.Database;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import javax.swing.BorderFactory;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
+import domain.model.Car;
+import domain.model.enums.Cell;
+import domain.model.Position;
+
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.*;
 
 public class WorldCellRender extends DefaultTableCellRenderer {
     private Border border;

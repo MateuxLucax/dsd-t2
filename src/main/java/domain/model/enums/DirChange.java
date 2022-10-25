@@ -1,4 +1,4 @@
-package domain.model;
+package domain.model.enums;
 
 import java.util.Random;
 

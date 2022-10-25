@@ -1,5 +1,9 @@
 package domain.model;
 
+import data.datasource.Database;
+import domain.model.enums.Cell;
+import domain.model.parallel.CustomSemaphone;
+import domain.model.parallel.Lockable;
 import domain.util.Constants;
 
 import java.util.ArrayList;
@@ -61,14 +65,14 @@ public class World {
             for (var j = 0; j < cols; j++) {
                 var id = Integer.parseInt(cells[j]);
                 var cell = Cell.from(id);
-                
+
                 if (cell == null) {
                     throw new RuntimeException("Invalid cell id" + id);
                 }
                 world.cells[i][j] = cell;
 
                 if (!cell.isNothing()) {
-                    world.semaphores[i][j] = new CustomSemaphone();
+                    world.semaphores[i][j] = Database.getInstance().getLockable();
                 }
             }
         }

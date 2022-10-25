@@ -1,10 +1,8 @@
 package presentation.adapter;
 
-import java.awt.HeadlessException;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 public class Util {
     public static void centerFrame(JFrame frame) {

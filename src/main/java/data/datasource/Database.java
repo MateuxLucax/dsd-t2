@@ -2,8 +2,10 @@ package data.datasource;
 
 import domain.model.Car;
 import domain.model.Position;
-import domain.model.Status;
+import domain.model.enums.Status;
 import domain.model.World;
+import domain.model.parallel.Lockable;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +19,8 @@ public class Database {
     private World world;
     private Map<Position, Car> cars;
     private Status status;
-    
+    private Lockable lockable;
+
     public static synchronized Database getInstance() {
         if (database == null) {
             database = new Database();
@@ -60,4 +63,12 @@ public class Database {
     public void clearCars() {
         this.cars.clear();
     };
+
+    public Lockable getLockable() {
+        return lockable;
+    }
+
+    public void setLockable(Lockable lockable) {
+        this.lockable = lockable;
+    }
 }
