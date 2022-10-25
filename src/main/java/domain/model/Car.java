@@ -93,13 +93,10 @@ public class Car extends Thread {
 
             var nextCell = db.getWorld().get(nextPosition);
 
-            // TODO nas roads as vezes dois carros se sobrepõem, então talvez toda cell teria
-            //   que ter um semaphore mesmo (adquirido ao entrar, soltado logo após sair da posição)
-            //   (mas p/ crossing funciona que nem agora)
-
             if (nextCell.isRoad()) {
                 // wait for next position to become available
                 db.getWorld().getSemaphore(nextPosition).acquire();
+                System.out.println("acquired: " + nextPosition);
             } else {
                 assert nextCell.isCrossing();
 
@@ -117,20 +114,24 @@ public class Car extends Thread {
                     boolean tryAcquire = true;
                     for (var dirChange : path) {
                         var semaphore = db.getWorld().getSemaphore(currPos);
-
+                        
                         // 500, TimeUnit.MILLISECONDS
                         tryAcquire = semaphore.tryAcquire(50);
                         if (!tryAcquire) {
                            break; 
                         }
+                        
+                        System.out.println("acquired: currPos: " + currPos + " semaphore: " + semaphore.toString());
                         acquiredCrossingSemaphores.add(semaphore);
-                        // importante vir antes porque o último currPos é fora do cruzamento
-
                         currDir = dirChange.changed(currDir);
                         currPos = currDir.moved(currPos);
-
                         remainingCrossingPositions.add(currPos);
                     }
+                    
+//                    var semaphore = db.getWorld().getSemaphore(currPos);;
+//                    tryAcquire = semaphore.tryAcquire(50);
+//                    System.out.println("acquired: currPos++: " + currPos + " semaphore: " + semaphore.toString());;;;;;;
+                    
                     
                     if (tryAcquire) {
                         acquiredNeededCrossing = true;
@@ -151,6 +152,14 @@ public class Car extends Thread {
 
             nextPosition = remainingCrossingPositions.remove();
             acquiredCrossingSemaphores.remove();
+            
+            if (remainingCrossingPositions.isEmpty()){
+                var semaphore = db.getWorld().getSemaphore(nextPosition);
+                semaphore.acquire();
+                System.out.println("acquired: currPos++: " + nextPosition + " semaphore: " + semaphore.toString());
+            }
+            
+            //System.out.println("nextPosition: " + nextPosition + " - remove: " + remove.toString());
         }
 
         // invariant: at this point nextPosition is available and the car can just move onto it
@@ -162,6 +171,7 @@ public class Car extends Thread {
     }
 
     private void release(Position pos) {
+        System.out.println("released: " + pos);
         db.getWorld().getSemaphore(pos).release();
     }
 
