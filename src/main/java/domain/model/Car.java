@@ -6,6 +6,7 @@ import domain.model.enums.Direction;
 import domain.model.enums.Status;
 import domain.model.parallel.Lockable;
 import domain.util.Constants;
+import java.util.List;
 
 import java.awt.*;
 import java.util.ArrayDeque;
@@ -103,11 +104,15 @@ public class Car extends Thread {
             } else {
                 assert nextCell.isCrossing();
 
-                DirChange chosenCrossingExit = DirChange.random();
-                DirChange[] path = crossingPaths.get(chosenCrossingExit);
 
                 Direction currDir = cell.roadDirection();
                 Position currPos = nextPosition;
+
+                DirChange[] path = getValidCrossingPath(
+                    Direction.valueOf(currDir.name()),
+                    (Position) currPos.clone(),
+                    List.of()
+                );
 
                 Direction originalCurrDir = Direction.valueOf(currDir.name());
                 Position originalCurrPos = (Position) currPos.clone();
@@ -157,6 +162,7 @@ public class Car extends Thread {
             
             if (remainingCrossingPositions.isEmpty()) {
                 var semaphore = db.getWorld().getSemaphore(nextPosition);
+                assert semaphore != null;
                 semaphore.acquire();
             }
             
@@ -169,6 +175,23 @@ public class Car extends Thread {
         var lastPosition = (Position) position.clone();
         handleMove(nextPosition);
         release(lastPosition);
+    }
+
+    private DirChange[] getValidCrossingPath(Direction currDir, Position currPos, List<DirChange> except) {
+        DirChange chosenCrossingExit = DirChange.random(except);
+        DirChange[] path = crossingPaths.get(chosenCrossingExit);
+
+        for (var dirChange : path) {
+            if (db.getWorld().getSemaphore(currPos) != null) {
+                currDir = dirChange.changed(currDir);
+                currPos = currDir.moved(currPos);
+            } else {
+                except.add(chosenCrossingExit);
+                return getValidCrossingPath(currDir, currPos, except);
+            }
+        }
+
+        return path;
     }
 
     private void release(Position pos) {

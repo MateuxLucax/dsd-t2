@@ -1,5 +1,7 @@
 package domain.model.enums;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public enum DirChange {
@@ -7,11 +9,12 @@ public enum DirChange {
     RIGHT_TURN,
     LEFT_TURN;
 
-    private static final Random rng = new Random();
+    private static final Random generator = new Random();
 
-    public static DirChange random() {
-        var vals = values();
-        return vals[rng.nextInt(vals.length)];
+    public static DirChange random(List<DirChange> except) {
+        List<DirChange> paths = new ArrayList<>(List.of(values()));
+        paths.removeIf(except::contains);
+        return paths.get(generator.nextInt(paths.size()));
     }
 
     public Direction changed(Direction dir) {
