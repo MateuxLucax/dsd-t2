@@ -111,8 +111,10 @@ public class StartView extends javax.swing.JFrame {
     private SelectedLockable getSelectedLockable() {
         if (monitorRadioBtn.isSelected()) {
             return SelectedLockable.MONITOR;
-        } else {
+        } else if (semaphorRadioBtn.isSelected()){
             return SelectedLockable.SEMAPHOR;
+        } else {
+            return null;
         }
     }
 
