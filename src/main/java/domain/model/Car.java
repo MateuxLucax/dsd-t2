@@ -42,6 +42,7 @@ public class Car extends Thread {
     private final Position position;
     private final Database db;
     private final Random rng;
+    private boolean acquiredFirst;
 
     // fila das posições que o carro vai tomar pelo cruzamento
     private final Queue<Position> remainingCrossingPositions;
@@ -56,6 +57,7 @@ public class Car extends Thread {
         this.position = position;
         this.db = Database.getInstance();
         this.rng = new Random();
+        this.acquiredFirst = false;
         remainingCrossingPositions = new ArrayDeque<>();
         acquiredCrossingSemaphores = new ArrayDeque<>();
     }
@@ -68,6 +70,11 @@ public class Car extends Thread {
 
     @Override
     public void run() {
+        if (!acquiredFirst){
+            acquiredFirst = true;
+            acquire(position);
+        }
+            
         try {
             while (!isInterrupted()) {
                 Thread.sleep(sleep);

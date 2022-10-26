@@ -30,4 +30,9 @@ public class CustomSemaphone extends Semaphore implements Lockable {
     public void release() {
         super.release();
     }
+
+    @Override
+    public boolean isLocked() {
+        return super.availablePermits() == 0;
+    }
 }
