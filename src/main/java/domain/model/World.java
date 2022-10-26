@@ -5,6 +5,9 @@ import domain.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import static domain.util.Constants.COLUMNS;
+import static domain.util.Constants.ROWS;
+
 public class World {
     private final Cell[][] cells;
     private final int rows;
@@ -14,14 +17,20 @@ public class World {
     // um semáforo por posição do cruzamento
     private final Lockable[][] semaphores;
 
+    // saídas disponíveis pra cada cruzamento (pode ser um T com uma saída a menos)
+    private final Direction[][] missingExit;
+
     private World(int rows, int cols) {
         this.cells = new Cell[rows][cols];
         this.rows = rows;
         this.cols = cols;
+
         entryPoints = new ArrayList<>();
         semaphores = new Lockable[rows][cols];
-        Constants.ROWS = rows;
-        Constants.COLUMNS = cols;
+        missingExit = new Direction[rows][cols];
+
+        ROWS = rows;
+        COLUMNS = cols;
     }
 
     public int rows() {
@@ -75,17 +84,50 @@ public class World {
 
         world.generateEntryPoints();
 
+        // find the missing exits for T-shaped crossings
+        for (var i = 0; i < ROWS; i++) {
+            for (var j = 0; j < COLUMNS; j++) {
+                var isCrossingTopLeftCell
+                    =  world.cells[i][j].isCrossing()
+                    && world.cells[i][j+1].isCrossing()
+                    && world.cells[i+1][j].isCrossing()
+                    && world.cells[i+1][j+1].isCrossing();
+
+                if (isCrossingTopLeftCell) {
+                    Direction missing = null;
+
+                    // there should be only one, otherwise the world is invalid
+                    if (world.cells[i-1][j].isNothing()) missing = Direction.NORTH;
+                    if (world.cells[i+2][j].isNothing()) missing = Direction.SOUTH;
+                    if (world.cells[i][j-1].isNothing()) missing = Direction.WEST;
+                    if (world.cells[i][j+2].isNothing()) missing = Direction.EAST;
+
+                    world.missingExit[i][j]     = missing;
+                    world.missingExit[i][j+1]   = missing;
+                    world.missingExit[i+1][j]   = missing;
+                    world.missingExit[i+1][j+1] = missing;
+                }
+            }
+        }
+
         return world;
     }
 
     public Lockable getSemaphore(int row, int col) {
-        //var cell = get(row, col);
-        //if (!cell.isCrossing()) throw new RuntimeException("getSemaphore() on non-crossing cell");
         return semaphores[row][col];
     }
 
     public Lockable getSemaphore(Position pos) {
         return getSemaphore(pos.getRow(), pos.getColumn());
+    }
+
+
+    public Direction missingExit(int row, int col) {
+        return missingExit[row][col];
+    }
+
+    public Direction missingExit(Position p) {
+        return missingExit(p.getRow(), p.getColumn());
     }
 
     private void generateEntryPoints() {

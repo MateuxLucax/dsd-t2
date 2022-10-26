@@ -37,6 +37,7 @@ public class Car extends Thread {
     private final Color color;
     private final Position position;
     private final Database db;
+    private final Random rng;
 
     // fila das posições que o carro vai tomar pelo cruzamento
     private final Queue<Position> remainingCrossingPositions;
@@ -50,6 +51,7 @@ public class Car extends Thread {
         this.color = color;
         this.position = position;
         this.db = Database.getInstance();
+        this.rng = new Random();
         remainingCrossingPositions = new ArrayDeque<>();
         acquiredCrossingSemaphores = new ArrayDeque<>();
     }
@@ -100,7 +102,16 @@ public class Car extends Thread {
             } else {
                 assert nextCell.isCrossing();
 
-                DirChange chosenCrossingExit = DirChange.random();
+                Direction missingExit = db.getWorld().missingExit(nextPosition);
+                DirChange[] availableChanges;
+                if (missingExit != null) {
+                    var changeForMissingExit = DirChange.fromDirectionChange(cell.roadDirection(), missingExit);
+                    availableChanges = DirChange.except(changeForMissingExit);
+                } else {
+                    availableChanges = DirChange.values();
+                }
+
+                DirChange chosenCrossingExit = availableChanges[rng.nextInt(0, availableChanges.length)];
                 DirChange[] path = crossingPaths.get(chosenCrossingExit);
 
                 Direction currDir = cell.roadDirection();
