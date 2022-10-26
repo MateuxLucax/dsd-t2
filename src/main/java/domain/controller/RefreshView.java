@@ -1,7 +1,7 @@
 package domain.controller;
 
 import data.datasource.Database;
-import domain.model.Status;
+import domain.model.enums.Status;
 import domain.util.Constants;
 import presentation.view.UpdatableSimulatorView;
 

@@ -1,4 +1,4 @@
-package domain.model;
+package domain.model.enums;
 
 import java.util.Random;
 
@@ -8,10 +8,6 @@ public enum DirChange {
     LEFT_TURN;
 
     private static final Random rng = new Random();
-
-    public static DirChange random() {
-        return values()[rng.nextInt(0, 3)];
-    }
 
     public static DirChange[] except(DirChange dir){
         return switch (dir) {
@@ -32,7 +28,7 @@ public enum DirChange {
             case SOUTH -> switch(end) {
                 case NORTH -> throw new RuntimeException("Cannot go backwards");
                 case SOUTH -> FORWARDS;
-                case WEST -> RIGHT_TURN; // TODO check
+                case WEST -> RIGHT_TURN;
                 case EAST -> LEFT_TURN;
             };
             case WEST -> switch(end) {

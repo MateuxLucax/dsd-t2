@@ -1,16 +1,19 @@
 package domain.controller;
 
+import data.datasource.Database;
 import domain.model.World;
 import presentation.adapter.Util;
+import presentation.enums.SelectedLockable;
 import presentation.view.SimulatorView;
-import data.datasource.Database;
+
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import javax.swing.JFrame;
 
 public class StartController {
     private File file;
+    private SelectedLockable lockable;
     
     public String handleSelectFile(JFrame view) {
         this.file = Util.loadFileSelector(view).getSelectedFile();
@@ -19,17 +22,25 @@ public class StartController {
         }
         return "";
     }
-    
+
+    public void handleSelectedLockable(SelectedLockable lockable) {
+        this.lockable = lockable;
+    }
+
     public void handleConfirm() {
-        if (file != null && file.exists()) {
+        if (lockable == null) {
+            Util.message("Nenhum gerenciador de threads selecionado!");
+        } else if (file != null && file.exists()) {
             try {
+                Database db = Database.getInstance();
+                db.setLockable(lockable.toClass());
+
                 String content = Files.readString(file.toPath());
                 World world = World.from(content);
                 System.out.println(world.toString() + '\n');
-                
-                Database db = Database.getInstance();
+
                 db.setWorld(world);
-                
+
                 Util.init(new SimulatorView());
             } catch (IOException ex) {
                 Util.message("Erro na leitura: " + ex.getMessage());

@@ -1,12 +1,11 @@
 package presentation.view;
 
-import presentation.adapter.WorldTableModel;
-import presentation.adapter.WorldCellRender;
 import domain.controller.SimulatorController;
-import domain.model.Cell;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import javax.swing.JScrollPane;
+import domain.model.enums.Cell;
+import presentation.adapter.WorldCellRender;
+import presentation.adapter.WorldTableModel;
+
+import java.awt.*;
 
 public class SimulatorView extends javax.swing.JFrame implements UpdatableSimulatorView {
     private final SimulatorController controller;
@@ -26,22 +25,22 @@ public class SimulatorView extends javax.swing.JFrame implements UpdatableSimula
         int columnCount = tableModel.getColumnCount();
         int rowCount = tableModel.getRowCount();
         
-        Dimension dimension = new Dimension((columnCount*30)+40, (rowCount*30));
-        Dimension dimension1 = new Dimension((columnCount*30)+40, (rowCount*30)+150);
+        Dimension dimension = new Dimension((columnCount * 30) + 40, (rowCount * 30));
+        Dimension dimension1 = new Dimension((columnCount * 30) + 40, (rowCount * 30) + 150);
         
         int spacing = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         if (dimension.getHeight() > screenSize.getHeight()-spacing)
             dimension.setSize(dimension.getWidth(), screenSize.getHeight()-spacing);
         
-        if (dimension.getWidth() > screenSize.getWidth()-spacing)
-            dimension.setSize(screenSize.getWidth()-spacing, dimension.getWidth());
+        if (dimension.getWidth() > screenSize.getWidth() - spacing)
+            dimension.setSize(screenSize.getWidth() - spacing, dimension.getWidth());
         
-        if (dimension1.getHeight() > screenSize.getHeight()-spacing)
-            dimension1.setSize(dimension1.getWidth(), screenSize.getHeight()-spacing);
+        if (dimension1.getHeight() > screenSize.getHeight() - spacing)
+            dimension1.setSize(dimension1.getWidth(), screenSize.getHeight() - spacing);
         
-        if (dimension1.getWidth() > screenSize.getWidth()-spacing)
-            dimension1.setSize(screenSize.getWidth()-spacing, dimension1.getWidth());
+        if (dimension1.getWidth() > screenSize.getWidth() - spacing)
+            dimension1.setSize(screenSize.getWidth() - spacing, dimension1.getWidth());
         
         this.setPreferredSize(dimension1);
         this.setSize(dimension1);

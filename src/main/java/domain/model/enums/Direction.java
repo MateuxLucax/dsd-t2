@@ -1,4 +1,6 @@
-package domain.model;
+package domain.model.enums;
+
+import domain.model.Position;
 
 public enum Direction {
     NORTH,

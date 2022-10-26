@@ -1,13 +1,14 @@
 package domain.controller;
 
+import data.datasource.Database;
 import domain.model.Car;
 import domain.model.Position;
-import data.datasource.Database;
-import domain.model.Lockable;
-import domain.model.Status;
+import domain.model.enums.Status;
+import domain.model.parallel.Lockable;
 import domain.util.Constants;
-import java.util.Map;
 import presentation.view.UpdatableSimulatorView;
+
+import java.util.Map;
 
 public class SimulatorController {
     private final Database db;

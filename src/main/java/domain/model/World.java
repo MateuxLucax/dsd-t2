@@ -1,6 +1,9 @@
 package domain.model;
 
-import domain.util.Constants;
+import data.datasource.Database;
+import domain.model.enums.Cell;
+import domain.model.enums.Direction;
+import domain.model.parallel.Lockable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,14 +73,18 @@ public class World {
             for (var j = 0; j < cols; j++) {
                 var id = Integer.parseInt(cells[j]);
                 var cell = Cell.from(id);
-                
+
                 if (cell == null) {
                     throw new RuntimeException("Invalid cell id" + id);
                 }
                 world.cells[i][j] = cell;
 
                 if (!cell.isNothing()) {
-                    world.semaphores[i][j] = new CustomSemaphone();
+                    try {
+                        world.semaphores[i][j] = Database.getInstance().getLockable().getDeclaredConstructor().newInstance();
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error while calling new instances of Lockable.");
+                    }
                 }
             }
         }

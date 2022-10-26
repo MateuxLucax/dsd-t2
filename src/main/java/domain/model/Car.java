@@ -1,13 +1,19 @@
 package domain.model;
 
-import domain.util.Constants;
 import data.datasource.Database;
+import domain.model.enums.DirChange;
+import domain.model.enums.Direction;
+import domain.model.enums.Status;
+import domain.model.parallel.Lockable;
+import domain.util.Constants;
+import java.util.List;
 
 import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.EnumMap;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.locks.Lock;
 
 public class Car extends Thread {
 
@@ -71,14 +77,13 @@ public class Car extends Thread {
                 tryMove();
             }
         } catch (InterruptedException ex) {
-            acquiredCrossingSemaphores.forEach(item -> item.release());
+            acquiredCrossingSemaphores.forEach(Lockable::release);
             acquiredCrossingSemaphores.clear();
             
             release(position);
         }
     }
 
-    @SuppressWarnings("empty-statement")
     public void tryMove() throws InterruptedException {
         Random random = new Random();
         Position nextPosition;
@@ -98,41 +103,30 @@ public class Car extends Thread {
             if (nextCell.isRoad()) {
                 // wait for next position to become available
                 db.getWorld().getSemaphore(nextPosition).acquire();
-                System.out.println("acquired: " + nextPosition);
             } else {
                 assert nextCell.isCrossing();
 
-                Direction missingExit = db.getWorld().missingExit(nextPosition);
-                DirChange[] availableChanges;
-                if (missingExit != null) {
-                    var changeForMissingExit = DirChange.fromDirectionChange(cell.roadDirection(), missingExit);
-                    availableChanges = DirChange.except(changeForMissingExit);
-                } else {
-                    availableChanges = DirChange.values();
-                }
-
-                DirChange chosenCrossingExit = availableChanges[rng.nextInt(0, availableChanges.length)];
-                DirChange[] path = crossingPaths.get(chosenCrossingExit);
 
                 Direction currDir = cell.roadDirection();
                 Position currPos = nextPosition;
-                
+
+                DirChange[] path = getValidCrossingPath(currPos, currDir);
+
                 Direction originalCurrDir = Direction.valueOf(currDir.name());
                 Position originalCurrPos = (Position) currPos.clone();
-                
+
                 boolean acquiredNeededCrossing = false;
                 do {      
                     boolean tryAcquire = true;
                     for (var dirChange : path) {
                         var semaphore = db.getWorld().getSemaphore(currPos);
-                        
+
                         // 500, TimeUnit.MILLISECONDS
                         tryAcquire = semaphore.tryAcquire(50);
                         if (!tryAcquire) {
                            break; 
                         }
-                        
-                        System.out.println("acquired: currPos: " + currPos + " semaphore: " + semaphore.toString());
+
                         acquiredCrossingSemaphores.add(semaphore);
                         currDir = dirChange.changed(currDir);
                         currPos = currDir.moved(currPos);
@@ -148,7 +142,7 @@ public class Car extends Thread {
                         acquiredNeededCrossing = true;
                         continue;
                     } else {
-                        acquiredCrossingSemaphores.forEach(item -> item.release());
+                        acquiredCrossingSemaphores.forEach(Lockable::release);
                         acquiredCrossingSemaphores.clear();
                         remainingCrossingPositions.clear();
                         currDir = originalCurrDir;
@@ -164,25 +158,40 @@ public class Car extends Thread {
             nextPosition = remainingCrossingPositions.remove();
             acquiredCrossingSemaphores.remove();
             
-            if (remainingCrossingPositions.isEmpty()){
-                var semaphore = db.getWorld().getSemaphore(nextPosition);
+            if (remainingCrossingPositions.isEmpty()) {
+                Lockable semaphore = db.getWorld().getSemaphore(nextPosition);
+                assert semaphore != null;
                 semaphore.acquire();
-                System.out.println("acquired: currPos++: " + nextPosition + " semaphore: " + semaphore.toString());
             }
             
             //System.out.println("nextPosition: " + nextPosition + " - remove: " + remove.toString());
         }
 
         // invariant: at this point nextPosition is available and the car can just move onto it
-        // either because the next cell is a road and we waited for it to become available
-        // or because it's a crossing and we acquired its semaphores
+        // either because the next cell is a road, and we waited for it to become available
+        // or because it's a crossing, and we acquired its semaphores
         var lastPosition = (Position) position.clone();
         handleMove(nextPosition);
         release(lastPosition);
     }
 
+    private DirChange[] getValidCrossingPath(Position currPos, Direction currDir) {
+        Direction missingExit = db.getWorld().missingExit(currPos);
+        DirChange[] availableChanges;
+        if (missingExit != null) {
+            var changeForMissingExit = DirChange.fromDirectionChange(currDir, missingExit);
+            availableChanges = DirChange.except(changeForMissingExit);
+        } else {
+            availableChanges = DirChange.values();
+        }
+
+        DirChange chosenCrossingExit = availableChanges[rng.nextInt(0, availableChanges.length)];
+        DirChange[] path = crossingPaths.get(chosenCrossingExit);
+
+        return path;
+    }
+
     private void release(Position pos) {
-        System.out.println("released: " + pos);
         db.getWorld().getSemaphore(pos).release();
     }
 

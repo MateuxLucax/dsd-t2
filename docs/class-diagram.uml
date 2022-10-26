@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>/Users/mateusbrandt/udesc/dsd-t2/src</OriginalElement>
+  <nodes>
+    <node x="1307.8877547952757" y="735.6884821383036">domain.model.World</node>
+    <node x="966.5145905595739" y="486.25151619020914">presentation.view.StartView</node>
+    <node x="616.1814442430166" y="357.9614111421333">domain.controller.RefreshView</node>
+    <node x="1660.1489765644772" y="400.47295615330864">presentation.adapter.WorldCellRender</node>
+    <node x="916.3110127709598" y="737.323449780214">domain.model.enums.Status</node>
+    <node x="599.2502784427771" y="9.16095585719907">domain.model.parallel.Lockable</node>
+    <node x="-115.28611206465548" y="493.38931207253756">presentation.enums.SelectedLockable</node>
+    <node x="202.9874627412471" y="167.76365162211215">presentation.view.SimulatorView</node>
+    <node x="372.4607647413349" y="664.767207789822">domain.model.enums.Direction</node>
+    <node x="939.3507959843387" y="897.5796480801305">presentation.adapter.Util</node>
+    <node x="-46.229870194210434" y="702.3635122822147">domain.model.enums.DirChange</node>
+    <node x="657.3136108199533" y="634.6848869317116">domain.model.Position</node>
+    <node x="938.4030740960791" y="69.2294789546861">domain.model.parallel.CustomSemaphone</node>
+    <node x="629.5291881720955" y="167.22469586234305">presentation.view.UpdatableSimulatorView</node>
+    <node x="699.0802555794273" y="519.4751858421538">domain.util.Constants</node>
+    <node x="1270.847364175007" y="154.7510654880882">domain.controller.SimulatorController</node>
+    <node x="270.32592540522376" y="-13.92752923084786">domain.model.parallel.CustomMonitor</node>
+    <node x="210.8747944363754" y="483.42513637084915">domain.controller.StartController</node>
+    <node x="975.3290009093816" y="258.8391882796919">presentation.adapter.WorldTableModel</node>
+    <node x="390.77500906072555" y="957.0791015385619">domain.model.Car</node>
+    <node x="112.05656071295633" y="911.5023492930536">domain.model.enums.Cell</node>
+    <node x="1379.5452140786117" y="468.0838961096141">domain.controller.CarSpawner</node>
+    <node x="1623.3040320223288" y="537.8575662469983">data.datasource.Database</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="data.datasource.Database" target="domain.model.World" relationship="TO_ONE">
+      <point x="-104.0000320223287" y="-22.16956624699833" />
+      <point x="1362.045" y="688.188" />
+      <point x="-73.3427547952756" y="-150.5004821383036" />
+    </edge>
+    <edge source="domain.model.World" target="domain.model.enums.Cell" relationship="CREATE">
+      <point x="-127.5" y="-6.108834058173102" />
+      <point x="866.814" y="880.0796480801305" />
+      <point x="866.814" y="939.5791015385619" />
+      <point x="99.99999999999997" y="-111.42324775449174" />
+    </edge>
+    <edge source="presentation.adapter.WorldCellRender" target="domain.model.Position" relationship="CREATE">
+      <point x="-236.99997656447727" y="15.00004384669137" />
+      <point x="1579.0" y="453.973" />
+      <point x="1579.0" y="703.188" />
+      <point x="96.00038918004668" y="-59.99688693171163" />
+    </edge>
+    <edge source="domain.controller.StartController" target="presentation.view.SimulatorView" relationship="CREATE">
+      <point x="-4.387331695128296" y="-60.5" />
+      <point x="0.0" y="127.5" />
+    </edge>
+    <edge source="data.datasource.Database" target="domain.model.Position" relationship="TO_MANY">
+      <point x="-3.202232869625732E-5" y="172.50043375300163" />
+      <point x="1727.304" y="1075.0" />
+      <point x="921.851" y="1075.0" />
+      <point x="921.851" y="853.823" />
+      <point x="96.00038918004668" y="90.63811306828836" />
+    </edge>
+    <edge source="data.datasource.Database" target="domain.model.enums.Status" relationship="TO_ONE">
+      <point x="-104.0" y="-38.10605005678917" />
+      <point x="1338.514590559574" y="672.2515161902091" />
+      <point x="1338.514590559574" y="688.2515161902091" />
+      <point x="1013.8110127709598" y="688.2515161902091" />
+      <point x="0.0" y="-49.5" />
+    </edge>
+    <edge source="domain.controller.StartController" target="presentation.enums.SelectedLockable" relationship="TO_ONE">
+      <point x="-172.5" y="9.964175701688418" />
+      <point x="132.0" y="0.0" />
+    </edge>
+    <edge source="presentation.view.SimulatorView" target="domain.controller.SimulatorController" relationship="TO_ONE">
+      <point x="-126.16153733602334" y="-127.5" />
+      <point x="252.82592540522376" y="-31.42752923084786" />
+      <point x="1435.347364175007" y="-31.42752923084786" />
+      <point x="0.0" y="-93.5" />
+    </edge>
+    <edge source="domain.model.World" target="domain.model.parallel.Lockable" relationship="CREATE">
+      <point x="127.5" y="14.999517861696404" />
+      <point x="2196.649" y="901.188" />
+      <point x="2196.649" y="-76.42752923084785" />
+      <point x="699.7502784427771" y="-76.42752923084785" />
+      <point x="0.0" y="-48.5" />
+    </edge>
+    <edge source="domain.model.parallel.CustomSemaphone" target="domain.model.parallel.Lockable" relationship="REALIZATION">
+      <point x="-100.50007409607906" y="44.99552104531389" />
+      <point x="880.029" y="174.725" />
+      <point x="880.029" y="138.0" />
+      <point x="699.75" y="138.0" />
+      <point x="-2.784427771302944E-4" y="48.50004414280093" />
+    </edge>
+    <edge source="domain.model.World" target="domain.model.parallel.Lockable" relationship="TO_MANY">
+      <point x="-14.999754795275749" y="150.49951786169652" />
+      <point x="1420.388" y="1058.0" />
+      <point x="1243.5" y="1058.0" />
+      <point x="1243.5" y="1137.579" />
+      <point x="2151.649" y="1137.579" />
+      <point x="2151.649" y="51.729" />
+      <point x="100.49972155722287" y="-5.931955857199071" />
+    </edge>
+    <edge source="presentation.view.SimulatorView" target="presentation.adapter.WorldCellRender" relationship="CREATE">
+      <point x="-156.16153733602334" y="-127.5" />
+      <point x="222.82592540522376" y="-61.42752923084785" />
+      <point x="1897.1489765644772" y="-61.42752923084785" />
+      <point x="0.0" y="-38.5" />
+    </edge>
+    <edge source="domain.controller.SimulatorController" target="domain.controller.RefreshView" relationship="CREATE">
+      <point x="-164.5" y="-21.026369625745133" />
+      <point x="890.5291881720955" y="227.22469586234305" />
+      <point x="130.8477439290789" y="-38.5" />
+    </edge>
+    <edge source="presentation.view.StartView" target="domain.controller.StartController" relationship="TO_ONE">
+      <point x="-173.5" y="9.223669651944647" />
+      <point x="172.5" y="46.050049471304646" />
+    </edge>
+    <edge source="presentation.view.SimulatorView" target="presentation.adapter.WorldTableModel" relationship="CREATE">
+      <point x="176.0" y="45.19775952002112" />
+      <point x="-117.5" y="-1.8777771375586099" />
+    </edge>
+    <edge source="domain.controller.RefreshView" target="presentation.view.UpdatableSimulatorView" relationship="TO_ONE">
+      <point x="-13.652256070921112" y="-38.5" />
+      <point x="0.0" y="26.5" />
+    </edge>
+    <edge source="domain.controller.SimulatorController" target="domain.controller.CarSpawner" relationship="CREATE">
+      <point x="-15.000364175007007" y="93.50000000000003" />
+      <point x="-46.69821407861173" y="-71.5" />
+    </edge>
+    <edge source="domain.model.World" target="domain.model.Position" relationship="CREATE">
+      <point x="127.50024520472425" y="-4.821383035960025E-4" />
+      <point x="1579.0" y="886.188" />
+      <point x="1579.0" y="703.188" />
+      <point x="96.00038918004668" y="-59.99688693171163" />
+    </edge>
+    <edge source="domain.model.Car" target="data.datasource.Database" relationship="TO_ONE">
+      <point x="243.99999093927443" y="-1.0153856192118837E-4" />
+      <point x="1594.0" y="1107.579" />
+      <point x="1594.0" y="710.358" />
+      <point x="-104.0000320223287" y="4.3375300163006614E-4" />
+    </edge>
+    <edge source="presentation.view.SimulatorView" target="presentation.view.UpdatableSimulatorView" relationship="REALIZATION">
+      <point x="176.0" y="-101.5389557597691" />
+      <point x="-116.5" y="0.0" />
+    </edge>
+    <edge source="domain.model.Car" target="domain.model.enums.DirChange" relationship="CREATE">
+      <point x="-244.0" y="100.42324775449174" />
+      <point x="92.27012980578957" y="1208.0023492930536" />
+      <point x="0.0" y="71.5" />
+    </edge>
+    <edge source="presentation.view.SimulatorView" target="presentation.adapter.WorldTableModel" relationship="TO_ONE">
+      <point x="176.0" y="0.0" />
+      <point x="-117.5" y="-47.07553665757973" />
+    </edge>
+    <edge source="domain.controller.SimulatorController" target="domain.controller.CarSpawner" relationship="TO_ONE">
+      <point x="-30.000364175007007" y="93.50000000000003" />
+      <point x="-61.69821407861173" y="-71.5" />
+    </edge>
+    <edge source="domain.controller.SimulatorController" target="data.datasource.Database" relationship="TO_ONE">
+      <point x="-3.641750070073613E-4" y="93.49993451191179" />
+      <point x="1435.347" y="418.339" />
+      <point x="1594.0" y="418.339" />
+      <point x="1594.0" y="710.358" />
+      <point x="-104.0000320223287" y="4.3375300163006614E-4" />
+    </edge>
+    <edge source="domain.model.parallel.CustomMonitor" target="domain.model.parallel.Lockable" relationship="REALIZATION">
+      <point x="7.459477626525768E-5" y="60.49952923084786" />
+      <point x="370.826" y="138.0" />
+      <point x="699.75" y="138.0" />
+      <point x="-2.784427771302944E-4" y="48.50004414280093" />
+    </edge>
+    <edge source="presentation.view.SimulatorView" target="domain.controller.SimulatorController" relationship="CREATE">
+      <point x="-141.16153733602334" y="-127.5" />
+      <point x="237.82592540522376" y="-46.42752923084785" />
+      <point x="1450.347364175007" y="-46.42752923084785" />
+      <point x="15.0" y="-93.5" />
+    </edge>
+    <edge source="data.datasource.Database" target="domain.model.Car" relationship="TO_MANY">
+      <point x="14.999967977671304" y="172.5" />
+      <point x="1742.304" y="1152.579" />
+      <point x="244.0" y="44.99989846143808" />
+    </edge>
+    <edge source="presentation.view.StartView" target="domain.controller.StartController" relationship="CREATE">
+      <point x="-173.5" y="-78.77633034805535" />
+      <point x="172.5" y="-41.949950528695354" />
+    </edge>
+    <edge source="domain.model.Car" target="domain.model.Position" relationship="TO_MANY">
+      <point x="243.99999093927443" y="14.999898461438079" />
+      <point x="1609.0" y="1122.579" />
+      <point x="1609.0" y="1075.0" />
+      <point x="921.851" y="1075.0" />
+      <point x="921.851" y="853.823" />
+      <point x="96.00038918004668" y="90.63811306828836" />
+    </edge>
+    <edge source="domain.controller.SimulatorController" target="domain.controller.RefreshView" relationship="TO_ONE">
+      <point x="-164.5" y="-35.52636962574513" />
+      <point x="880.0291881720955" y="212.72469586234305" />
+      <point x="120.34774392907889" y="-38.5" />
+    </edge>
+    <edge source="presentation.adapter.WorldTableModel" target="domain.model.World" relationship="TO_ONE">
+      <point x="-9.09381697056233E-7" y="83.49981172030812" />
+      <point x="1092.829" y="447.0" />
+      <point x="1362.045" y="447.0" />
+      <point x="-73.3427547952756" y="-150.5004821383036" />
+    </edge>
+    <edge source="domain.model.World" target="domain.model.Position" relationship="TO_MANY">
+      <point x="2.4520472425137996E-4" y="150.49951786169652" />
+      <point x="1435.388" y="1075.0" />
+      <point x="921.851" y="1075.0" />
+      <point x="921.851" y="853.823" />
+      <point x="96.00038918004668" y="90.63811306828836" />
+    </edge>
+    <edge source="domain.controller.RefreshView" target="data.datasource.Database" relationship="TO_ONE">
+      <point x="107.13255575698338" y="38.49958885786674" />
+      <point x="866.814" y="718.188" />
+      <point x="1594.0" y="718.188" />
+      <point x="1594.0" y="710.358" />
+      <point x="-104.0000320223287" y="4.3375300163006614E-4" />
+    </edge>
+    <edge source="presentation.adapter.WorldCellRender" target="data.datasource.Database" relationship="TO_ONE">
+      <point x="-236.99997656447727" y="4.3846691369253676E-5" />
+      <point x="1594.0" y="438.973" />
+      <point x="1594.0" y="710.358" />
+      <point x="-104.0000320223287" y="4.3375300163006614E-4" />
+    </edge>
+    <edge source="domain.model.Car" target="domain.model.parallel.Lockable" relationship="TO_MANY">
+      <point x="243.99999093927443" y="-15.000101538561921" />
+      <point x="1243.5" y="1092.579" />
+      <point x="1243.5" y="1137.579" />
+      <point x="2151.649" y="1137.579" />
+      <point x="2151.649" y="51.729" />
+      <point x="100.49972155722287" y="-5.931955857199071" />
+    </edge>
+    <edge source="domain.controller.CarSpawner" target="domain.model.Car" relationship="CREATE">
+      <point x="87.5" y="-19.226329862615785" />
+      <point x="2181.649" y="520.3575662469983" />
+      <point x="2181.649" y="1290.5791015385619" />
+      <point x="634.7750090607256" y="1290.5791015385619" />
+      <point x="0.0" y="150.5" />
+    </edge>
+    <edge source="domain.model.World" target="domain.model.enums.Cell" relationship="TO_MANY">
+      <point x="15.000245204724251" y="150.5000000000001" />
+      <point x="1450.388" y="1305.5791015385619" />
+      <point x="212.05656071295633" y="1305.5791015385619" />
+      <point x="0.0" y="139.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.4599228461208744" showDependencies="true" x="1050.4999999999998" y="624.4999999999999" />
+  <SelectedNodes>
+    <node>domain.model.parallel.Lockable</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

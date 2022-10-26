@@ -1,8 +1,9 @@
 package presentation.adapter;
 
-import domain.model.Cell;
 import data.datasource.Database;
 import domain.model.World;
+import domain.model.enums.Cell;
+
 import javax.swing.table.AbstractTableModel;
 
 public class WorldTableModel extends AbstractTableModel {
