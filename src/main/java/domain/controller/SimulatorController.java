@@ -31,26 +31,28 @@ public class SimulatorController {
         spawner.start();
     };
     
-    public void handleStop() {
+    public boolean handleStop() {
         db.setStatus(Status.STOPPED);
         handleStopSpawner();
         stopCars();
+        return true;
     }
     
-    public void handleStopAndWait() {
+    public boolean handleStopAndWait() {
         handleStopSpawner();
+        return true;
     }
     
     private void handleStopSpawner() {
         if (spawner != null) {
-            spawner.stop();
+            spawner.interrupt();
         }
     };
     
     private void stopCars() {
         for (Map.Entry<Position, Car> entry : db.getCars().entrySet()) {
             Car car = entry.getValue();
-            car.stop();
+            car.interrupt();
         }
         db.clearCars();
     }

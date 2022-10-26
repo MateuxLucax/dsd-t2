@@ -75,8 +75,8 @@ public class SimulatorView extends javax.swing.JFrame implements UpdatableSimula
 
         jLabel1 = new javax.swing.JLabel();
         jSqtdMax = new javax.swing.JSpinner();
-        jBstart = new javax.swing.JButton();
-        jBstop = new javax.swing.JButton();
+        startBtn = new javax.swing.JButton();
+        stopButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jSintervalo = new javax.swing.JSpinner();
         jBstopAndWait = new javax.swing.JButton();
@@ -87,15 +87,15 @@ public class SimulatorView extends javax.swing.JFrame implements UpdatableSimula
 
         jLabel1.setText("<html>Qtd. Máx <br>Veículos</html>");
 
-        jBstart.setText("Iniciar");
-        jBstart.addActionListener(new java.awt.event.ActionListener() {
+        startBtn.setText("Iniciar");
+        startBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jBstartActionPerformed(evt);
             }
         });
 
-        jBstop.setText("Encerrar");
-        jBstop.addActionListener(new java.awt.event.ActionListener() {
+        stopButton.setText("Encerrar");
+        stopButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jBstopActionPerformed(evt);
             }
@@ -145,9 +145,9 @@ public class SimulatorView extends javax.swing.JFrame implements UpdatableSimula
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jSintervalo, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-                        .addComponent(jBstart)
+                        .addComponent(startBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jBstop)
+                        .addComponent(stopButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jBstopAndWait, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(22, 22, 22))
@@ -162,8 +162,8 @@ public class SimulatorView extends javax.swing.JFrame implements UpdatableSimula
                             .addComponent(jSqtdMax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2)
                             .addComponent(jSintervalo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jBstart)
-                            .addComponent(jBstop)
+                            .addComponent(startBtn)
+                            .addComponent(stopButton)
                             .addComponent(jBstopAndWait, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
@@ -176,21 +176,27 @@ public class SimulatorView extends javax.swing.JFrame implements UpdatableSimula
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jBstartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBstartActionPerformed
+    private void jBstartActionPerformed(java.awt.event.ActionEvent ignored) {
         this.controller.handleStart(getCarCount(), getInterval());
-    }//GEN-LAST:event_jBstartActionPerformed
+    }
 
-    private void jBstopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBstopActionPerformed
-        this.controller.handleStop();
-    }//GEN-LAST:event_jBstopActionPerformed
+    private void jBstopActionPerformed(java.awt.event.ActionEvent ignored) {
+        this.startBtn.setEnabled(false);
+        if (this.controller.handleStop()) {
+            this.startBtn.setEnabled(true);
+        }
+    }
 
     private void jBstopAndWaitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBstopAndWaitActionPerformed
-        this.controller.handleStopAndWait();
-    }//GEN-LAST:event_jBstopAndWaitActionPerformed
+        this.startBtn.setEnabled(false);
+        if (this.controller.handleStop()) {
+            this.startBtn.setEnabled(true);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jBstart;
-    private javax.swing.JButton jBstop;
+    private javax.swing.JButton startBtn;
+    private javax.swing.JButton stopButton;
     private javax.swing.JButton jBstopAndWait;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
