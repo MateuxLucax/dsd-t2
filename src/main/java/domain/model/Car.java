@@ -13,6 +13,7 @@ import java.util.ArrayDeque;
 import java.util.EnumMap;
 import java.util.Queue;
 import java.util.Random;
+import java.util.concurrent.locks.Lock;
 
 public class Car extends Thread {
 
@@ -81,7 +82,6 @@ public class Car extends Thread {
         }
     }
 
-    @SuppressWarnings("empty-statement")
     public void tryMove() throws InterruptedException {
         Random random = new Random();
         Position nextPosition;
@@ -161,7 +161,7 @@ public class Car extends Thread {
             acquiredCrossingSemaphores.remove();
             
             if (remainingCrossingPositions.isEmpty()) {
-                var semaphore = db.getWorld().getSemaphore(nextPosition);
+                Lockable semaphore = db.getWorld().getSemaphore(nextPosition);
                 assert semaphore != null;
                 semaphore.acquire();
             }
