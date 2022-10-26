@@ -79,16 +79,16 @@ public class World {
                 }
                 world.cells[i][j] = cell;
 
-                if (!cell.isNothing()) {
+                /*if (!cell.isNothing()) {
                     try {
                         world.semaphores[i][j] = Database.getInstance().getLockable().getDeclaredConstructor().newInstance();
                     } catch (Exception e) {
                         throw new RuntimeException("Error while calling new instances of Lockable.");
                     }
-                }
+                }*/
             }
         }
-
+        
         world.generateEntryPoints();
 
         // find the missing exits for T-shaped crossings
@@ -118,6 +118,20 @@ public class World {
         }
 
         return world;
+    }
+    
+    public void loadLocks() {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
+                if (!cells[i][j].isNothing()) {
+                    try {
+                        semaphores[i][j] = Database.getInstance().getLockable().getDeclaredConstructor().newInstance();
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error while calling new instances of Lockable.");
+                    }
+                }
+            }
+        }
     }
 
     public Lockable getSemaphore(int row, int col) {

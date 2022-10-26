@@ -6,16 +6,16 @@ import java.util.concurrent.locks.ReentrantLock;
 public class CustomMonitor extends ReentrantLock implements Lockable {
     @Override
     public void release() {
-        if (super.isHeldByCurrentThread()) {
+        // temporary - CarSpawner is locking, so Car can not unlock
+        try {
             super.unlock();
+        } catch (Exception e) {
         }
     }
 
     @Override
     public void acquire() {
-        if (isHeldByCurrentThread()) {
-            super.lock();
-        }
+        super.lock();   
     }
 
     @Override

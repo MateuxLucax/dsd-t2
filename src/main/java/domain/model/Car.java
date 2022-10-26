@@ -6,14 +6,12 @@ import domain.model.enums.Direction;
 import domain.model.enums.Status;
 import domain.model.parallel.Lockable;
 import domain.util.Constants;
-import java.util.List;
 
 import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.EnumMap;
 import java.util.Queue;
 import java.util.Random;
-import java.util.concurrent.locks.Lock;
 
 public class Car extends Thread {
 
@@ -77,11 +75,14 @@ public class Car extends Thread {
                 tryMove();
             }
         } catch (InterruptedException ex) {
-            acquiredCrossingSemaphores.forEach(Lockable::release);
-            acquiredCrossingSemaphores.clear();
-            
-            release(position);
+            handleRemove(false);
         }
+    }
+
+    private void releaseData() {
+        acquiredCrossingSemaphores.forEach(Lockable::release);
+        acquiredCrossingSemaphores.clear();
+        release(position);
     }
 
     public void tryMove() throws InterruptedException {
@@ -94,7 +95,7 @@ public class Car extends Thread {
             nextPosition = cell.roadDirection().moved(position);
 
             if (!validMove(nextPosition)) {
-                handleRemove();
+                handleRemove(true);
                 return;
             }
 
@@ -102,7 +103,7 @@ public class Car extends Thread {
 
             if (nextCell.isRoad()) {
                 // wait for next position to become available
-                db.getWorld().getSemaphore(nextPosition).acquire();
+                acquire(nextPosition);
             } else {
                 assert nextCell.isCrossing();
 
@@ -121,7 +122,6 @@ public class Car extends Thread {
                     for (var dirChange : path) {
                         var semaphore = db.getWorld().getSemaphore(currPos);
 
-                        // 500, TimeUnit.MILLISECONDS
                         tryAcquire = semaphore.tryAcquire(50);
                         if (!tryAcquire) {
                            break; 
@@ -133,15 +133,10 @@ public class Car extends Thread {
                         remainingCrossingPositions.add(currPos);
                     }
                     
-//                    var semaphore = db.getWorld().getSemaphore(currPos);;
-//                    tryAcquire = semaphore.tryAcquire(50);
-//                    System.out.println("acquired: currPos++: " + currPos + " semaphore: " + semaphore.toString());;;;;;;
-                    
-                    
                     if (tryAcquire) {
                         acquiredNeededCrossing = true;
                         continue;
-                    } else {
+                    } else { // release and reset state if some was not acquired
                         acquiredCrossingSemaphores.forEach(Lockable::release);
                         acquiredCrossingSemaphores.clear();
                         remainingCrossingPositions.clear();
@@ -158,13 +153,10 @@ public class Car extends Thread {
             nextPosition = remainingCrossingPositions.remove();
             acquiredCrossingSemaphores.remove();
             
+            // acquire position from first road after crossing
             if (remainingCrossingPositions.isEmpty()) {
-                Lockable semaphore = db.getWorld().getSemaphore(nextPosition);
-                assert semaphore != null;
-                semaphore.acquire();
+                acquire(nextPosition);
             }
-            
-            //System.out.println("nextPosition: " + nextPosition + " - remove: " + remove.toString());
         }
 
         // invariant: at this point nextPosition is available and the car can just move onto it
@@ -194,6 +186,11 @@ public class Car extends Thread {
     private void release(Position pos) {
         db.getWorld().getSemaphore(pos).release();
     }
+    
+    private void acquire(Position pos) {
+        db.getWorld().getSemaphore(pos).acquire();
+    }
+
 
     private void handleMove(Position nextMove) {
         if (isInterrupted()) return;
@@ -214,16 +211,20 @@ public class Car extends Thread {
         return true;
     }
     
-    private void handleRemove() {
+    private void handleRemove(boolean shouldStop) {
+        acquiredCrossingSemaphores.forEach(Lockable::release);
+        acquiredCrossingSemaphores.clear();
+        
         db.removeCar(position);
         release(position);
-        interrupt();
+        if (shouldStop)
+            stop();
     }
     
     private void shouldStop() {
         Status status = db.getStatus();
         if (status != Status.RUNNING) {
-            interrupt();
+            handleRemove(true);
         }
     }
 }

@@ -4,8 +4,6 @@ import data.datasource.Database;
 import domain.model.Car;
 import domain.model.Position;
 import domain.model.enums.Status;
-import domain.model.parallel.Lockable;
-import domain.util.Constants;
 import presentation.view.UpdatableSimulatorView;
 
 import java.util.Map;
@@ -25,7 +23,10 @@ public class SimulatorController {
     public void handleStart(int carCount, int interval) {
         db.setStatus(Status.RUNNING);
         handleStopSpawner();
+        stopCars();
         
+        
+        db.getWorld().loadLocks();
         spawner = new CarSpawner(carCount, interval);
         spawner.start();
     };
@@ -34,7 +35,6 @@ public class SimulatorController {
         db.setStatus(Status.STOPPED);
         handleStopSpawner();
         stopCars();
-        cleanupLocks();
     }
     
     public void handleStopAndWait() {
@@ -43,26 +43,15 @@ public class SimulatorController {
     
     private void handleStopSpawner() {
         if (spawner != null) {
-            spawner.interrupt();
+            spawner.stop();
         }
     };
     
     private void stopCars() {
         for (Map.Entry<Position, Car> entry : db.getCars().entrySet()) {
             Car car = entry.getValue();
-            car.interrupt();
+            car.stop();
         }
         db.clearCars();
     }
-    
-    private void cleanupLocks() {
-        for (int i = 0; i < Constants.ROWS; i++) {
-            for (int j = 0; j < Constants.COLUMNS; j++) {
-                Lockable lock = db.getWorld().getSemaphore(i, j);
-                if (lock != null)
-                    lock.release();
-            }
-        }
-    }
-
 }
