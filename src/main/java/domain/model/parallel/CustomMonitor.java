@@ -6,7 +6,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class CustomMonitor extends ReentrantLock implements Lockable {
     @Override
     public void release() {
-        super.unlock();
+        if (isLocked())
+            super.unlock();
     }
 
     @Override
