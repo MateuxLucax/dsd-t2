@@ -1,7 +1,6 @@
 package domain.controller;
 
 import data.datasource.Database;
-import domain.model.enums.Status;
 import domain.util.Constants;
 import presentation.view.UpdatableSimulatorView;
 
@@ -20,8 +19,8 @@ public class RefreshView extends Thread {
             try {
                 Thread.sleep(Constants.refreshIntervalMs);
                 view.updateView();
-                if (db.getStatus() != Status.RUNNING)
-                    db.clearCars();
+                //if (db.getStatus() != Status.RUNNING)
+                  //  db.clearCars();
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
