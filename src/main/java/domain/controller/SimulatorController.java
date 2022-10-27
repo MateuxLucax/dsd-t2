@@ -45,14 +45,14 @@ public class SimulatorController {
     
     private void handleStopSpawner() {
         if (spawner != null) {
-            spawner.interrupt();
+            spawner.stop();
         }
     };
     
     private void stopCars() {
         for (Map.Entry<Position, Car> entry : db.getCars().entrySet()) {
             Car car = entry.getValue();
-            car.interrupt();
+            car.stop();
         }
         db.clearCars();
     }

@@ -48,7 +48,7 @@ public class Car extends Thread {
     private final Queue<Position> remainingCrossingPositions;
 
     // fila paralela à de cima, com os semáforos correspondentes a cada posição
-    private final Queue<Lockable> acquiredCrossingSemaphores;
+    private final Queue<Lockable> acquiredCrossingLockables;
 
     public Car(Position position, int id, int sleep, Color color) {
         this.id = id;
@@ -59,7 +59,7 @@ public class Car extends Thread {
         this.rng = new Random();
         this.acquiredFirst = false;
         remainingCrossingPositions = new ArrayDeque<>();
-        acquiredCrossingSemaphores = new ArrayDeque<>();
+        acquiredCrossingLockables = new ArrayDeque<>();
     }
 
     public Color getColor() {
@@ -87,8 +87,8 @@ public class Car extends Thread {
     }
 
     private void releaseData() {
-        acquiredCrossingSemaphores.forEach(Lockable::release);
-        acquiredCrossingSemaphores.clear();
+        acquiredCrossingLockables.forEach(Lockable::release);
+        acquiredCrossingLockables.clear();
         release(position);
     }
 
@@ -127,14 +127,14 @@ public class Car extends Thread {
                 do {      
                     boolean tryAcquire = true;
                     for (var dirChange : path) {
-                        var semaphore = db.getWorld().getSemaphore(currPos);
+                        var lockable = db.getWorld().getLockable(currPos);
 
-                        tryAcquire = semaphore.tryAcquire(50);
+                        tryAcquire = lockable.tryAcquire(50);
                         if (!tryAcquire) {
                            break; 
                         }
 
-                        acquiredCrossingSemaphores.add(semaphore);
+                        acquiredCrossingLockables.add(lockable);
                         currDir = dirChange.changed(currDir);
                         currPos = currDir.moved(currPos);
                         remainingCrossingPositions.add(currPos);
@@ -144,8 +144,8 @@ public class Car extends Thread {
                         acquiredNeededCrossing = true;
                         continue;
                     } else { // release and reset state if some was not acquired
-                        acquiredCrossingSemaphores.forEach(Lockable::release);
-                        acquiredCrossingSemaphores.clear();
+                        acquiredCrossingLockables.forEach(Lockable::release);
+                        acquiredCrossingLockables.clear();
                         remainingCrossingPositions.clear();
                         currDir = originalCurrDir;
                         currPos = originalCurrPos;
@@ -158,7 +158,7 @@ public class Car extends Thread {
             assert !remainingCrossingPositions.isEmpty();
 
             nextPosition = remainingCrossingPositions.remove();
-            acquiredCrossingSemaphores.remove();
+            acquiredCrossingLockables.remove();
             
             // acquire position from first road after crossing
             if (remainingCrossingPositions.isEmpty()) {
@@ -168,7 +168,7 @@ public class Car extends Thread {
 
         // invariant: at this point nextPosition is available and the car can just move onto it
         // either because the next cell is a road, and we waited for it to become available
-        // or because it's a crossing, and we acquired its semaphores
+        // or because it's a crossing, and we acquired its lockables
         var lastPosition = (Position) position.clone();
         handleMove(nextPosition);
         release(lastPosition);
@@ -191,11 +191,11 @@ public class Car extends Thread {
     }
 
     private void release(Position pos) {
-        db.getWorld().getSemaphore(pos).release();
+        db.getWorld().getLockable(pos).release();
     }
     
     private void acquire(Position pos) {
-        db.getWorld().getSemaphore(pos).acquire();
+        db.getWorld().getLockable(pos).acquire();
     }
 
 
@@ -219,8 +219,8 @@ public class Car extends Thread {
     }
     
     private void handleRemove(boolean shouldStop) {
-        acquiredCrossingSemaphores.forEach(Lockable::release);
-        acquiredCrossingSemaphores.clear();
+        acquiredCrossingLockables.forEach(Lockable::release);
+        acquiredCrossingLockables.clear();
         
         db.removeCar(position);
         release(position);

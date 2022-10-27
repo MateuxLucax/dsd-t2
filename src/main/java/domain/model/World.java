@@ -18,7 +18,7 @@ public class World {
     private final List<Position> entryPoints;
 
     // um semáforo por posição do cruzamento
-    private final Lockable[][] semaphores;
+    private final Lockable[][] lockables;
 
     // saídas disponíveis pra cada cruzamento (pode ser um T com uma saída a menos)
     private final Direction[][] missingExit;
@@ -29,7 +29,7 @@ public class World {
         this.cols = cols;
 
         entryPoints = new ArrayList<>();
-        semaphores = new Lockable[rows][cols];
+        lockables = new Lockable[rows][cols];
         missingExit = new Direction[rows][cols];
 
         ROWS = rows;
@@ -78,14 +78,6 @@ public class World {
                     throw new RuntimeException("Invalid cell id" + id);
                 }
                 world.cells[i][j] = cell;
-
-                /*if (!cell.isNothing()) {
-                    try {
-                        world.semaphores[i][j] = Database.getInstance().getLockable().getDeclaredConstructor().newInstance();
-                    } catch (Exception e) {
-                        throw new RuntimeException("Error while calling new instances of Lockable.");
-                    }
-                }*/
             }
         }
         
@@ -125,7 +117,7 @@ public class World {
             for (int j = 0; j < COLUMNS; j++) {
                 if (!cells[i][j].isNothing()) {
                     try {
-                        semaphores[i][j] = Database.getInstance().getLockable().getDeclaredConstructor().newInstance();
+                        lockables[i][j] = Database.getInstance().getLockable().getDeclaredConstructor().newInstance();
                     } catch (Exception e) {
                         throw new RuntimeException("Error while calling new instances of Lockable.");
                     }
@@ -134,12 +126,12 @@ public class World {
         }
     }
 
-    public Lockable getSemaphore(int row, int col) {
-        return semaphores[row][col];
+    public Lockable getLockable(int row, int col) {
+        return lockables[row][col];
     }
 
-    public Lockable getSemaphore(Position pos) {
-        return getSemaphore(pos.getRow(), pos.getColumn());
+    public Lockable getLockable(Position pos) {
+        return getLockable(pos.getRow(), pos.getColumn());
     }
 
 

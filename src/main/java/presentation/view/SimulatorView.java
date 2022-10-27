@@ -189,7 +189,7 @@ public class SimulatorView extends javax.swing.JFrame implements UpdatableSimula
 
     private void jBstopAndWaitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBstopAndWaitActionPerformed
         this.startBtn.setEnabled(false);
-        if (this.controller.handleStop()) {
+        if (this.controller.handleStopAndWait()) {
             this.startBtn.setEnabled(true);
         }
     }

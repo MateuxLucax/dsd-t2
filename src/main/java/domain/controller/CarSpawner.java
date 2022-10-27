@@ -60,15 +60,14 @@ public class CarSpawner extends Thread {
                     }
 
                     Map<Position, Car> cars = db.getCars();
-                    while (db.getWorld().getSemaphore(position).isLocked()){}
+                    while (db.getWorld().getLockable(position).isLocked()){}
                     
-                    //db.getWorld().getSemaphore(position).acquire();
                     int speed = rng.nextInt(Constants.minCarIntervalMs, 1 + Constants.maxCarIntervalMs);
                     Car car = new Car((Position) position.clone(), nextId(), speed, nextColor());
                     cars.put(position, car);
                     
                     car.start();
-                    while (!db.getWorld().getSemaphore(position).isLocked()){}
+                    while (!db.getWorld().getLockable(position).isLocked()){}
                     
                     if (interval > 0)
                         Thread.sleep(interval);
